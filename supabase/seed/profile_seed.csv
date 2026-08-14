@@ -1,0 +1,13 @@
+id,name,phone_number,email_address,avatar_url,location,location_text
+1,"Amara Okafor","+447700900142","amara.okafor@example.com","https://i.pravatar.cc/300?img=47","SRID=4326;POINT(-0.1276 51.5072)","Soho, London, UK"
+2,"Daniel Whitfield","+447700900318","daniel.whitfield@example.com","https://i.pravatar.cc/300?img=12","SRID=4326;POINT(-0.0754 51.5155)","Shoreditch, London, UK"
+3,"Priya Raghunathan","+447700900577","priya.raghunathan@example.com","https://i.pravatar.cc/300?img=32","SRID=4326;POINT(-2.2426 53.4808)","Northern Quarter, Manchester, UK"
+4,"Tomás Ferreira","+351912345678","tomas.ferreira@example.com","https://i.pravatar.cc/300?img=59","SRID=4326;POINT(-9.1393 38.7223)","Alfama, Lisbon, Portugal"
+5,"Ruth Adeyemi","+2348031234567","ruth.adeyemi@example.com","https://i.pravatar.cc/300?img=44","SRID=4326;POINT(3.4216 6.4281)","Lekki Phase 1, Lagos, Nigeria"
+6,"Callum Hendry","+447700900821","callum.hendry@example.com","https://i.pravatar.cc/300?img=15","SRID=4326;POINT(-3.1883 55.9533)","Old Town, Edinburgh, UK"
+7,"Sofia Almeida","+34612345678","sofia.almeida@example.com","https://i.pravatar.cc/300?img=25","SRID=4326;POINT(2.1734 41.3851)","Gràcia, Barcelona, Spain"
+8,"Marcus Bell",,"marcus.bell@example.com","https://i.pravatar.cc/300?img=68","SRID=4326;POINT(-73.9857 40.7484)","Midtown, New York, USA"
+9,"Ines Bouchard","+33612345678",,"https://i.pravatar.cc/300?img=41","SRID=4326;POINT(2.3522 48.8566)","Le Marais, Paris, France"
+10,"Kwame Mensah","+233241234567","kwame.mensah@example.com",,"SRID=4326;POINT(-0.1870 5.6037)","Osu, Accra, Ghana"
+11,"Elena Kowalska","+48512345678","elena.kowalska@example.com","https://i.pravatar.cc/300?img=20","SRID=4326;POINT(21.0122 52.2297)","Śródmieście, Warsaw, Poland"
+12,,"+447700900993","j.nakamura@example.com","https://i.pravatar.cc/300?img=51","SRID=4326;POINT(139.7690 35.6804)","Chiyoda, Tokyo, Japan"

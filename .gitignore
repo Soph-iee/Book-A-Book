@@ -1,0 +1,25 @@
+# Repository-wide ignores.
+# The Flutter app has its own .gitignore in book_a_book/ — git honours both.
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editors
+.idea/
+*.iml
+.vscode/*
+!.vscode/launch.json
+!.vscode/settings.json
+!.vscode/extensions.json
+
+# Secrets — never commit real credentials
+.env
+*.env
+!*.example.env
+dart_define.json
+
+# Supabase CLI local state
+supabase/.temp/
+supabase/.branches/

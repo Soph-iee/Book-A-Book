@@ -1,0 +1,5 @@
+{
+  "_comment": "Copy this file to dart_define.json (which is gitignored) and fill in the values from Supabase Dashboard > Project Settings > API Keys.",
+  "SUPABASE_URL": "https://YOUR-PROJECT-REF.supabase.co",
+  "SUPABASE_PUBLISHABLE_KEY": "sb_publishable_xxxxxxxxxxxxxxxxxxxxxx"
+}
