@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../errors/failure.dart';
 import '../theme/app_theme.dart';
@@ -54,28 +55,31 @@ class AppErrorView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final message =
-        error is Failure ? (error as Failure).message : 'Something went wrong.';
+    final message = error is Failure
+        ? (error as Failure).message
+        : 'Something went wrong.';
 
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(Insets.lg),
+        // `Insets` values are ScreenUtil getters now, so these can no longer be
+        // `const`. An unscaled layout is a real bug; a missing `const` is not.
+        padding: EdgeInsets.all(Insets.lg),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
               error is NetworkFailure ? Icons.wifi_off : Icons.error_outline,
-              size: 48,
+              size: 48.w,
               color: theme.colorScheme.error,
             ),
-            const SizedBox(height: Insets.md),
+            SizedBox(height: Insets.md),
             Text(
               message,
               textAlign: TextAlign.center,
               style: theme.textTheme.bodyLarge,
             ),
             if (onRetry != null) ...[
-              const SizedBox(height: Insets.lg),
+              SizedBox(height: Insets.lg),
               OutlinedButton.icon(
                 onPressed: onRetry,
                 icon: const Icon(Icons.refresh),
@@ -108,22 +112,20 @@ class EmptyStateView extends StatelessWidget {
 
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(Insets.lg),
+        padding: EdgeInsets.all(Insets.lg),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, size: 48, color: theme.colorScheme.outline),
-            const SizedBox(height: Insets.md),
+            Icon(icon, size: 48.w, color: theme.colorScheme.outline),
+            SizedBox(height: Insets.md),
             Text(
               message,
               textAlign: TextAlign.center,
-              style: theme.textTheme.bodyMedium
-                  ?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
             ),
-            if (action != null) ...[
-              const SizedBox(height: Insets.lg),
-              action!,
-            ],
+            if (action != null) ...[SizedBox(height: Insets.lg), action!],
           ],
         ),
       ),

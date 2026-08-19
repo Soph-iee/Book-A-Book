@@ -72,17 +72,17 @@ class Book {
   /// anything the database computes are deliberately absent — let Postgres own
   /// them.
   Map<String, dynamic> toInsert() => {
-        'owner_id': ownerId,
-        'title': title,
-        'author': author,
-        'isbn': isbn,
-        'cover_image_url': coverImageUrls,
-        'condition': condition.dbValue,
-        'status': status.dbValue,
-        'genre': genre,
-        'why_read': whyRead,
-        'tags': tags,
-      };
+    'owner_id': ownerId,
+    'title': title,
+    'author': author,
+    'isbn': isbn,
+    'cover_image_url': coverImageUrls,
+    'condition': condition.dbValue,
+    'status': status.dbValue,
+    'genre': genre,
+    'why_read': whyRead,
+    'tags': tags,
+  };
 
   Book copyWith({
     String? title,
@@ -155,10 +155,10 @@ class BookOwner {
   final String? avatarUrl;
 
   factory BookOwner.fromMap(Map<String, dynamic> map) => BookOwner(
-        id: map['id'] as int,
-        name: map['name'] as String? ?? 'Unknown',
-        avatarUrl: map['avatar_url'] as String?,
-      );
+    id: map['id'] as int,
+    name: map['name'] as String? ?? 'Unknown',
+    avatarUrl: map['avatar_url'] as String?,
+  );
 }
 
 /// Mirrors the `condition` enum in Postgres.
@@ -177,9 +177,9 @@ enum BookCondition {
   final String label;
 
   static BookCondition fromDb(Object? value) => BookCondition.values.firstWhere(
-        (c) => c.dbValue == value,
-        orElse: () => BookCondition.good,
-      );
+    (c) => c.dbValue == value,
+    orElse: () => BookCondition.good,
+  );
 }
 
 /// Mirrors the `status` enum in Postgres.
@@ -194,7 +194,7 @@ enum BookStatus {
   final String label;
 
   static BookStatus fromDb(Object? value) => BookStatus.values.firstWhere(
-        (s) => s.dbValue == value,
-        orElse: () => BookStatus.available,
-      );
+    (s) => s.dbValue == value,
+    orElse: () => BookStatus.available,
+  );
 }

@@ -32,18 +32,18 @@ class Profile {
   }
 
   factory Profile.fromMap(Map<String, dynamic> map) => Profile(
-        id: map['id'] as int,
-        name: map['name'] as String? ?? 'Unknown',
-        phoneNumber: map['phone_number'] as String?,
-        emailAddress: map['email_address'] as String?,
-        avatarUrl: map['avatar_url'] as String?,
-        locationText: map['location_text'] as String?,
-      );
+    id: map['id'] as int,
+    name: map['name'] as String? ?? 'Unknown',
+    phoneNumber: map['phone_number'] as String?,
+    emailAddress: map['email_address'] as String?,
+    avatarUrl: map['avatar_url'] as String?,
+    locationText: map['location_text'] as String?,
+  );
 
   Map<String, dynamic> toUpdate() => {
-        'name': name,
-        'phone_number': phoneNumber,
-        'avatar_url': avatarUrl,
-        'location_text': locationText,
-      };
+    'name': name,
+    'phone_number': phoneNumber,
+    'avatar_url': avatarUrl,
+    'location_text': locationText,
+  };
 }

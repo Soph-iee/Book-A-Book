@@ -36,8 +36,11 @@ class ProfileRepository {
 
   Future<Profile> fetchById(int id) {
     return _db.run(() async {
-      final row =
-          await _db.from(Tables.profiles).select().eq('id', id).single();
+      final row = await _db
+          .from(Tables.profiles)
+          .select()
+          .eq('id', id)
+          .single();
 
       return Profile.fromMap(row);
     });
@@ -68,7 +71,9 @@ class ProfileRepository {
     return _db.run(() async {
       final path = '$profileId/avatar.$fileExtension';
 
-      await _db.storage.from(Buckets.avatars).uploadBinary(
+      await _db.storage
+          .from(Buckets.avatars)
+          .uploadBinary(
             path,
             bytes,
             fileOptions: const FileOptions(upsert: true),

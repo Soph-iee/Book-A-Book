@@ -1,10 +1,16 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../../core/theme/app_text_style.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/color.dart';
 import '../../domain/book.dart';
+import 'book_cover.dart';
+import 'escrow_stat.dart';
+import 'location_badge.dart';
+import 'owner_rating_row.dart';
 
-/// A reusable book tile.
+/// A vertical book card, sized for a horizontal carousel.
 ///
 /// Note what this widget does *not* do: it does not extend `ConsumerWidget`, it
 /// does not read a provider, and it does not know a repository exists. It takes
@@ -13,139 +19,111 @@ import '../../domain/book.dart';
 /// state and can only be reused where that state exists.
 class BookCard extends StatelessWidget {
   const BookCard({
-    required this.book,
-    this.onTap,
-    this.onBorrow,
     super.key,
+    required this.book,
+    required this.onTap,
+    this.ownerLocation,
+    this.ownerRating,
+    this.width = 150,
   });
 
   final Book book;
-  final VoidCallback? onTap;
-  final VoidCallback? onBorrow;
+  final VoidCallback onTap;
+
+  /// The owner's `Profile.locationText`. `Book` has no location field, and
+  /// `BooksRepository._withOwner` does not select one today — pass `null` and
+  /// the badge simply does not render. Do not invent a location.
+  final String? ownerLocation;
+
+  /// No rating column exists in the schema. Pass `null` until one does.
+  final double? ownerRating;
+
+  /// Design-pixel width for a carousel. Pass `null` to fill the available
+  /// width instead — which is what a grid cell wants.
+  final double? width;
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return Card(
-      clipBehavior: Clip.antiAlias,
-      color: theme.colorScheme.surfaceContainerLow,
-      child: InkWell(
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.all(Insets.md),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _Cover(url: book.primaryCoverUrl),
-              const SizedBox(width: Insets.md),
-              Expanded(
-                child: Column(
+    return SizedBox(
+      width: width?.w,
+      child: Material(
+        color: AppColors.white,
+        clipBehavior: Clip.antiAlias,
+        // No elevation: the mockup's cards are flat, separated from the white
+        // page by a single warm hairline. `shape` carries the radius here —
+        // Material asserts that `borderRadius` is null when `shape` is set.
+        shape: RoundedRectangleBorder(
+          borderRadius: AppRadius.mdAll,
+          side: BorderSide(color: AppColors.cardBorder, width: 1.w),
+        ),
+        child: InkWell(
+          onTap: onTap,
+          child: Padding(
+            padding: EdgeInsets.all(Insets.sm),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                BookCover(
+                  imageUrl: book.primaryCoverUrl,
+                  width: double.infinity,
+                  height: 190.h,
+                  badge: ownerLocation == null
+                      ? null
+                      : LocationBadge(label: ownerLocation!),
+                ),
+                SizedBox(height: Insets.sm),
+                // Green, not black — the only text in the mockup that is
+                // neither `ink` nor sitting on a green fill.
+                Text(
+                  book.title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppTextStyle.cardTitle.copyWith(
+                    color: AppColors.brandGreen,
+                  ),
+                ),
+                Text(
+                  book.author,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppTextStyle.cardAuthor.copyWith(
+                    color: AppColors.inkMuted,
+                  ),
+                ),
+                SizedBox(height: Insets.sm),
+                OwnerRatingRow(
+                  name: book.owner?.name ?? 'Unknown',
+                  avatarUrl: book.owner?.avatarUrl,
+                  rating: ownerRating,
+                ),
+                SizedBox(height: Insets.sm),
+                // Both Flexible: "borrow period" is a long label in a narrow
+                // card, and a fixed pair overflows the moment the text scale
+                // goes up.
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      book.title,
-                      style: theme.textTheme.titleMedium,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: Insets.xs),
-                    Text(
-                      book.author,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurfaceVariant,
+                    const Flexible(
+                      child: EscrowStat(
+                        value: EscrowStat.placeholder,
+                        label: 'escrow',
                       ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: Insets.sm),
-                    Wrap(
-                      spacing: Insets.sm,
-                      runSpacing: Insets.xs,
-                      children: [
-                        _Chip(label: book.condition.label),
-                        if (book.genre != null) _Chip(label: book.genre!),
-                      ],
-                    ),
-                    if (onBorrow != null && book.isAvailable) ...[
-                      const SizedBox(height: Insets.sm),
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: FilledButton.tonal(
-                          onPressed: onBorrow,
-                          style: FilledButton.styleFrom(
-                            minimumSize: const Size(0, 36),
-                          ),
-                          child: const Text('Request'),
-                        ),
+                    SizedBox(width: Insets.xs),
+                    const Flexible(
+                      child: EscrowStat(
+                        value: EscrowStat.placeholder,
+                        label: 'borrow period',
+                        accent: true,
                       ),
-                    ],
+                    ),
                   ],
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class _Cover extends StatelessWidget {
-  const _Cover({this.url});
-
-  final String? url;
-
-  @override
-  Widget build(BuildContext context) {
-    const width = 64.0;
-    const height = 96.0;
-
-    final placeholder = Container(
-      width: width,
-      height: height,
-      color: Theme.of(context).colorScheme.surfaceContainerHighest,
-      child: const Icon(Icons.menu_book_outlined),
-    );
-
-    if (url == null) return ClipRRect(child: placeholder);
-
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(8),
-      child: CachedNetworkImage(
-        imageUrl: url!,
-        width: width,
-        height: height,
-        fit: BoxFit.cover,
-        placeholder: (_, _) => placeholder,
-        errorWidget: (_, _, _) => placeholder,
-      ),
-    );
-  }
-}
-
-class _Chip extends StatelessWidget {
-  const _Chip({required this.label});
-
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: Insets.sm,
-        vertical: Insets.xs,
-      ),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.secondaryContainer,
-        borderRadius: BorderRadius.circular(999),
-      ),
-      child: Text(
-        label,
-        style: theme.textTheme.labelSmall?.copyWith(
-          color: theme.colorScheme.onSecondaryContainer,
         ),
       ),
     );

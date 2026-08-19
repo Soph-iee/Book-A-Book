@@ -16,10 +16,7 @@ class AuthController extends AsyncNotifier<void> {
 
   AuthRepository get _repository => ref.read(authRepositoryProvider);
 
-  Future<void> signIn({
-    required String email,
-    required String password,
-  }) async {
+  Future<void> signIn({required String email, required String password}) async {
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(
       () => _repository.signIn(email: email.trim(), password: password),
@@ -47,5 +44,6 @@ class AuthController extends AsyncNotifier<void> {
   }
 }
 
-final authControllerProvider =
-    AsyncNotifierProvider<AuthController, void>(AuthController.new);
+final authControllerProvider = AsyncNotifierProvider<AuthController, void>(
+  AuthController.new,
+);

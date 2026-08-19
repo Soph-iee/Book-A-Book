@@ -1,0 +1,4 @@
+# Raster images: .png, .jpg, .webp
+# Git does not track empty directories, and Flutter's `flutter pub get` fails
+# on an asset directory that does not exist — so this placeholder keeps both
+# happy until the first real image lands. Delete it once you add one.

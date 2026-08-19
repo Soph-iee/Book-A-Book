@@ -1,0 +1,28 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "book_a_book",
+      "cwd": "book_a_book",
+      "request": "launch",
+      "type": "dart",
+      "args": ["--dart-define-from-file=dart_define.json"]
+    },
+    {
+      "name": "book_a_book (profile mode)",
+      "cwd": "book_a_book",
+      "request": "launch",
+      "type": "dart",
+      "flutterMode": "profile",
+      "args": ["--dart-define-from-file=dart_define.json"]
+    },
+    {
+      "name": "book_a_book (release mode)",
+      "cwd": "book_a_book",
+      "request": "launch",
+      "type": "dart",
+      "flutterMode": "release",
+      "args": ["--dart-define-from-file=dart_define.json"]
+    }
+  ]
+}

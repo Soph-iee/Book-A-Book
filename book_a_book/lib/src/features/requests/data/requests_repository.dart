@@ -17,7 +17,8 @@ class RequestsRepository {
   ///
   /// Verify these names against your schema:
   ///   select conname from pg_constraint where conrelid = 'book_requests'::regclass;
-  static const String _withRelations = '''
+  static const String _withRelations =
+      '''
 *,
 book:${Tables.books}(id, title, author, cover_image_url, status),
 borrower:${Tables.profiles}!book_requests_borrower_id_fkey(id, name, avatar_url),

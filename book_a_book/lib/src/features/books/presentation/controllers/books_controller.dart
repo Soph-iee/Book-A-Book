@@ -58,13 +58,15 @@ final booksControllerProvider =
 /// `.family` builds one provider per argument; `.autoDispose` throws each away
 /// when nothing is listening, so typing five characters does not leak five
 /// cached result sets forever.
-final bookSearchProvider =
-    FutureProvider.autoDispose.family<List<Book>, String>((ref, query) {
-  return ref.watch(booksRepositoryProvider).search(query);
-});
+final bookSearchProvider = FutureProvider.autoDispose
+    .family<List<Book>, String>((ref, query) {
+      return ref.watch(booksRepositoryProvider).search(query);
+    });
 
 /// A single book, for the detail screen.
-final bookByIdProvider =
-    FutureProvider.autoDispose.family<Book, int>((ref, id) {
+final bookByIdProvider = FutureProvider.autoDispose.family<Book, int>((
+  ref,
+  id,
+) {
   return ref.watch(booksRepositoryProvider).fetchById(id);
 });

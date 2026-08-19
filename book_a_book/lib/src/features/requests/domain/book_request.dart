@@ -41,11 +41,11 @@ class BookRequest {
   }
 
   Map<String, dynamic> toInsert() => {
-        'book_id': bookId,
-        'borrower_id': borrowerId,
-        'owner_id': ownerId,
-        'status': status.dbValue,
-      };
+    'book_id': bookId,
+    'borrower_id': borrowerId,
+    'owner_id': ownerId,
+    'status': status.dbValue,
+  };
 }
 
 enum RequestStatus {
@@ -65,7 +65,7 @@ enum RequestStatus {
   bool get isOpen => this == pending || this == approved || this == borrowed;
 
   static RequestStatus fromDb(Object? value) => RequestStatus.values.firstWhere(
-        (s) => s.dbValue == value,
-        orElse: () => RequestStatus.pending,
-      );
+    (s) => s.dbValue == value,
+    orElse: () => RequestStatus.pending,
+  );
 }

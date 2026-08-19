@@ -41,8 +41,11 @@ class BooksRepository {
     return _db.run(() async {
       // `.single()` throws PGRST116 when there is no row, which the adapter
       // maps to NotFoundFailure.
-      final row =
-          await _db.from(Tables.books).select(_withOwner).eq('id', id).single();
+      final row = await _db
+          .from(Tables.books)
+          .select(_withOwner)
+          .eq('id', id)
+          .single();
 
       return Book.fromMap(row);
     });
