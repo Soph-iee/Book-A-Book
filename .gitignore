@@ -1,6 +1,10 @@
 # Repository-wide ignores.
 # The Flutter app has its own .gitignore in book_a_book/ — git honours both.
 
+# Local AI assistant instructions — personal to this machine, not project config.
+# The glob also catches OneDrive sync conflict copies like CLAUDE-Soph-PC.md.
+CLAUDE*.md
+
 # OS
 .DS_Store
 Thumbs.db

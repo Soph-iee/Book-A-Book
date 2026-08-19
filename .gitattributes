@@ -1,0 +1,30 @@
+# Normalise line endings so a Windows checkout and a macOS/Linux CI runner
+# produce identical blobs. Without this, every file you touch shows as fully
+# rewritten in diffs the moment a second platform joins the project.
+* text=auto eol=lf
+
+# Windows-only scripts must keep CRLF or they break when executed.
+*.bat   text eol=crlf
+*.cmd   text eol=crlf
+*.ps1   text eol=crlf
+
+# Gradle wrapper
+gradlew      text eol=lf
+gradlew.bat  text eol=crlf
+
+# Treat these as binary: never diff, never munge line endings.
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
+*.ico  binary
+*.ttf  binary
+*.otf  binary
+*.woff binary
+*.woff2 binary
+*.jar  binary
+*.keystore binary
+*.jks  binary
+
+# Generated — collapse in pull request diffs.
+pubspec.lock  linguist-generated=true
