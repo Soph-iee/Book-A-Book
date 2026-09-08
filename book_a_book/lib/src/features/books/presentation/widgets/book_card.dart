@@ -72,7 +72,7 @@ class BookCard extends StatelessWidget {
                       ? null
                       : LocationBadge(label: ownerLocation!),
                 ),
-                SizedBox(height: Insets.sm),
+                Insets.sm.verticalSpace,
                 // Green, not black — the only text in the mockup that is
                 // neither `ink` nor sitting on a green fill.
                 Text(
@@ -91,13 +91,13 @@ class BookCard extends StatelessWidget {
                     color: AppColors.inkMuted,
                   ),
                 ),
-                SizedBox(height: Insets.sm),
+                Insets.sm.verticalSpace,
                 OwnerRatingRow(
                   name: book.owner?.name ?? 'Unknown',
                   avatarUrl: book.owner?.avatarUrl,
                   rating: ownerRating,
                 ),
-                SizedBox(height: Insets.sm),
+                Insets.sm.verticalSpace,
                 // Both Flexible: "borrow period" is a long label in a narrow
                 // card, and a fixed pair overflows the moment the text scale
                 // goes up.
@@ -111,7 +111,7 @@ class BookCard extends StatelessWidget {
                         label: 'escrow',
                       ),
                     ),
-                    SizedBox(width: Insets.xs),
+                    Insets.xs.horizontalSpace,
                     const Flexible(
                       child: EscrowStat(
                         value: EscrowStat.placeholder,

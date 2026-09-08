@@ -54,14 +54,14 @@ class Book {
       title: map['title'] as String? ?? 'Untitled',
       author: map['author'] as String? ?? 'Unknown author',
       isbn: map['isbn'] as String?,
-      coverImageUrls: _stringList(map['cover_image_url']),
+      coverImageUrls: Book.stringList(map['cover_image_url']),
       condition: BookCondition.fromDb(map['condition']),
       status: BookStatus.fromDb(map['status']),
       aiSummary: map['ai_summary'] as String?,
       genre: map['genre'] as String?,
       whyRead: map['why_read'] as String?,
-      tags: _stringList(map['tags']),
-      createdAt: _dateTime(map['created_at']),
+        tags: Book.stringList(map['tags']),
+      createdAt: Book.dateTime(map['created_at']),
       owner: map['owner'] is Map<String, dynamic>
           ? BookOwner.fromMap(map['owner'] as Map<String, dynamic>)
           : null,
@@ -115,7 +115,7 @@ class Book {
 
   /// PostgREST returns `text[]` as a JSON array, but be defensive: a raw
   /// Postgres array literal (`{"a","b"}`) can still arrive from an RPC.
-  static List<String> _stringList(Object? value) {
+  static List<String> stringList(Object? value) {
     if (value is List) {
       return value.map((e) => e.toString()).toList(growable: false);
     }
@@ -131,7 +131,7 @@ class Book {
     return const [];
   }
 
-  static DateTime? _dateTime(Object? value) =>
+  static DateTime? dateTime(Object? value) =>
       value is String ? DateTime.tryParse(value)?.toLocal() : null;
 
   @override
@@ -148,16 +148,20 @@ class Book {
 /// books feature does not import the profile feature, so the two stay
 /// independently changeable.
 class BookOwner {
-  const BookOwner({required this.id, required this.name, this.avatarUrl});
+  const BookOwner({required this.id, required this.name, this.avatarUrl,     this.locationText,          // add
+});
 
   final int id;
   final String name;
   final String? avatarUrl;
+  final String? locationText; // add
 
   factory BookOwner.fromMap(Map<String, dynamic> map) => BookOwner(
     id: map['id'] as int,
     name: map['name'] as String? ?? 'Unknown',
     avatarUrl: map['avatar_url'] as String?,
+        locationText: map['location_text'] as String?,   // add
+
   );
 }
 

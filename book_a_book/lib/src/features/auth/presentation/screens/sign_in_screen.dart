@@ -1,4 +1,8 @@
+import 'package:book_a_book/src/core/errors/failure.dart';
+import 'package:book_a_book/src/features/auth/presentation/view_models/auth_view_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/router/app_router.dart';
@@ -10,45 +14,20 @@ import '../../../../core/widgets/buttons.dart';
 import '../auth_validators.dart';
 import '../widgets/auth_scaffold.dart';
 
-/// Sign in.
-///
-/// This screen used to do both jobs, toggled by a private `_isRegistering`
-/// bool. It is split from sign-up because the header puts *Login* and *Sign Up*
-/// side by side as separate destinations, and a shared screen would mean the
-/// header's two buttons lead to the same route in different internal states —
-/// which cannot be linked, cannot be deep-linked, and reads wrong in the back
-/// stack.
-///
-/// TODO(backend): becomes a `ConsumerStatefulWidget`.
-///   - `final state = ref.watch(authControllerProvider)` feeds
-///     `isLoading: state.isLoading` on the button.
-///   - `ref.listen(authControllerProvider, ...)` shows the error SnackBar —
-///     `ref.watch` would re-show it on every unrelated rebuild.
-///   - `_submit` calls
-///     `ref.read(authControllerProvider.notifier).signIn(email:, password:)`.
-///   - **Do not navigate on success.** `app_router.dart` already listens to the
-///     auth stream through `_AuthRefreshNotifier`, so a successful sign-in
-///     re-runs `redirect` on its own; a `context.go()` here would race it.
-///   - Map errors with a switch over the sealed `Failure` hierarchy, never the
-///     raw Supabase message — it leaks whether an email is registered.
-class SignInScreen extends StatefulWidget {
+class SignInScreen extends ConsumerStatefulWidget {
   const SignInScreen({super.key});
 
   @override
-  State<SignInScreen> createState() => _SignInScreenState();
+  ConsumerState<SignInScreen> createState() => _SignInScreenState();
 }
 
-class _SignInScreenState extends State<SignInScreen> {
+class _SignInScreenState extends ConsumerState<SignInScreen> {
   final _formKey = GlobalKey<FormState>();
   final _email = TextEditingController();
   final _password = TextEditingController();
 
-  bool _isSubmitting = false;
-
   @override
   void dispose() {
-    // Controllers hold native resources; leaking them is the most common
-    // memory bug in Flutter forms.
     _email.dispose();
     _password.dispose();
     super.dispose();
@@ -56,21 +35,28 @@ class _SignInScreenState extends State<SignInScreen> {
 
   Future<void> _submit() async {
     if (!(_formKey.currentState?.validate() ?? false)) return;
-
-    // Placeholder for the controller call. The delay exists only so the
-    // button's loading state is visible during a design review.
-    setState(() => _isSubmitting = true);
-    await Future<void>.delayed(const Duration(milliseconds: 600));
-    if (!mounted) return;
-    setState(() => _isSubmitting = false);
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Sign in is not wired up yet.')),
-    );
+    final userEmail = _email.text.trim();
+    final userPassword = _password.text.trim();
+    await ref
+        .read(authViewModelProvider.notifier)
+        .signIn(email: userEmail, password: userPassword);
   }
 
   @override
   Widget build(BuildContext context) {
+    final authState = ref.watch(authViewModelProvider);
+    ref.listen(authViewModelProvider, (_, next) {
+      next.whenOrNull(
+        error: (error, _) => ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(_messageFor(error)))),
+        data: (data) => ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Signed in successfully'))),
+        // Do NOT navigate here — see below.
+      );
+    });
+
     return AuthScaffold(
       title: 'Welcome back',
       subtitle: 'Sign in to borrow books near you.',
@@ -89,7 +75,7 @@ class _SignInScreenState extends State<SignInScreen> {
                 autofillHints: const [AutofillHints.email],
                 validator: AuthValidators.email,
               ),
-              SizedBox(height: Insets.md),
+              Insets.md.verticalSpace,
               AppTextField(
                 controller: _password,
                 label: 'Password',
@@ -109,14 +95,14 @@ class _SignInScreenState extends State<SignInScreen> {
             onPressed: () => _showForgotPassword(context),
           ),
         ),
-        SizedBox(height: Insets.lg),
+        Insets.lg.verticalSpace,
         PrimaryButton(
           label: 'Sign in',
           expand: true,
-          isLoading: _isSubmitting,
           onPressed: _submit,
+          isLoading: authState.isLoading,
         ),
-        SizedBox(height: Insets.md),
+        Insets.md.verticalSpace,
         AuthSwitchRow(
           prompt: 'New here?',
           action: 'Sign up',
@@ -124,6 +110,13 @@ class _SignInScreenState extends State<SignInScreen> {
         ),
       ],
     );
+  }
+
+  String _messageFor(Object error) {
+    if (error is Failure) {
+      return authFriendlyMessage(error);
+    }
+    return 'Something went wrong. Please try again.';
   }
 
   void _showForgotPassword(BuildContext context) {
@@ -185,7 +178,7 @@ class _ForgotPasswordDialogState extends State<_ForgotPasswordDialog> {
               'We will email you a link to choose a new one.',
               style: AppTextStyle.body.copyWith(color: AppColors.inkMuted),
             ),
-            SizedBox(height: Insets.md),
+            Insets.md.verticalSpace,
             AppTextField(
               controller: _email,
               label: 'Email',

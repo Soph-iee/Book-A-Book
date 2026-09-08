@@ -1,7 +1,7 @@
 /// Table and column names live here so a rename in Postgres is a single edit
 /// in Dart, and so typos fail at compile time instead of at runtime.
 abstract final class Tables {
-  static const String profiles = 'profiles';
+  static const String profile = 'profile';
   static const String books = 'books';
   static const String bookRequests = 'book_requests';
 }

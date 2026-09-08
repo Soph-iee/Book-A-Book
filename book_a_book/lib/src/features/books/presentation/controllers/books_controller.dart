@@ -70,3 +70,8 @@ final bookByIdProvider = FutureProvider.autoDispose.family<Book, int>((
 ) {
   return ref.watch(booksRepositoryProvider).fetchById(id);
 });
+
+/// Distinct genres across available books.
+final availableGenresProvider = FutureProvider.autoDispose<List<String>>((ref) {
+  return ref.watch(booksRepositoryProvider).fetchAvailableGenres();
+});

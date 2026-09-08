@@ -54,7 +54,7 @@ class _AppTextFieldState extends State<AppTextField> {
           widget.label,
           style: AppTextStyle.label.copyWith(color: AppColors.ink),
         ),
-        SizedBox(height: Insets.xs),
+        Insets.xs.verticalSpace,
         TextFormField(
           controller: widget.controller,
           keyboardType: widget.keyboardType,

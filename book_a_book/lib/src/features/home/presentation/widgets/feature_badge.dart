@@ -34,7 +34,7 @@ class FeatureBadge extends StatelessWidget {
           alignment: Alignment.center,
           child: Icon(icon, size: 18.w, color: AppColors.brandGreen),
         ),
-        SizedBox(width: Insets.sm),
+        Insets.sm.horizontalSpace,
         // Flexible because the two badges sit side by side, and "Escrow
         // protection" overflows on a narrow phone otherwise.
         Flexible(

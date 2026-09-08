@@ -175,7 +175,7 @@ class _ButtonContent extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Flexible(child: Text(label, overflow: TextOverflow.ellipsis)),
-        SizedBox(width: Insets.sm),
+        Insets.sm.horizontalSpace,
         Icon(icon, size: 18.w, color: color),
       ],
     );

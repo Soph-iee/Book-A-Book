@@ -1,8 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' hide AuthUser;
 
 import '../../../core/supabase/supabase_adapter.dart';
 import '../../../core/supabase/supabase_providers.dart';
+import '../domain/auth_session.dart';
+import '../domain/auth_user.dart';
 
 /// All authentication data access.
 ///
@@ -14,18 +16,50 @@ class AuthRepository {
 
   final SupabaseAdapter _db;
 
-  Session? get currentSession => _db.auth.currentSession;
+  AuthSession? get currentSession {
+    final session = _db.auth.currentSession;
+    if (session == null) return null;
+    return AuthSession(
+      accessToken: session.accessToken,
+      expiresAt: DateTime.fromMillisecondsSinceEpoch(
+        (session.expiresAt ?? 0) * 1000,
+        isUtc: true,
+      ),
+    );
+  }
 
-  User? get currentUser => _db.auth.currentUser;
+  AuthUser? get currentUser {
+    final user = _db.auth.currentUser;
+    if (user == null) return null;
+    return AuthUser(
+      id: user.id,
+      email: user.email ?? '',
+      name: user.userMetadata?['name'] as String?,
+    );
+  }
 
   Stream<AuthState> get onAuthStateChange => _db.auth.onAuthStateChange;
 
-  Future<AuthResponse> signIn({
+  Future<AuthUser> signIn({
     required String email,
     required String password,
   }) {
     return _db.run(
-      () => _db.auth.signInWithPassword(email: email, password: password),
+      () async {
+        final response = await _db.auth.signInWithPassword(
+          email: email,
+          password: password,
+        );
+        final user = response.user;
+        if (user == null) {
+          throw const AuthException('Sign-in failed: no user returned.');
+        }
+        return AuthUser(
+          id: user.id,
+          email: user.email ?? '',
+          name: user.userMetadata?['name'] as String?,
+        );
+      },
     );
   }
 
@@ -33,17 +67,34 @@ class AuthRepository {
   /// a Postgres trigger can read to create the matching `profiles` row. That
   /// trigger belongs in a migration — do not try to insert the profile from
   /// the client, because the row must exist before the client is trusted.
-  Future<AuthResponse> signUp({
+  ///
+  ///
+  static const String kEmailRedirectTo = 'io.supabase.flutterquickstart://login-callback';
+
+  Future<AuthUser> signUp({
     required String email,
     required String password,
     required String name,
+    String? redirectTo = kEmailRedirectTo,
   }) {
     return _db.run(
-      () => _db.auth.signUp(
-        email: email,
-        password: password,
-        data: {'name': name},
-      ),
+      () async {
+        final response = await _db.auth.signUp(
+          email: email,
+          password: password,
+          data: {'name': name},
+          emailRedirectTo: redirectTo ?? kEmailRedirectTo,
+        );
+        final user = response.user;
+        if (user == null) {
+          throw const AuthException('Sign-up failed: no user returned.');
+        }
+        return AuthUser(
+          id: user.id,
+          email: user.email ?? '',
+          name: user.userMetadata?['name'] as String?,
+        );
+      },
     );
   }
 

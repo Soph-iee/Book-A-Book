@@ -9,9 +9,8 @@ import '../../features/auth/presentation/screens/sign_up_screen.dart';
 import '../../features/books/presentation/screens/book_detail_screen.dart';
 import '../../features/books/presentation/screens/books_screen.dart';
 import '../../features/home/presentation/screens/home_screen.dart';
-import '../errors/failure.dart';
+import '../../features/onboarding/presentation/location_gate_screen.dart';
 import '../supabase/supabase_providers.dart';
-import '../widgets/async_value_view.dart';
 
 /// Route names and paths in one enum, so no screen ever hardcodes `'/books'`
 /// and a path rename is a single edit.
@@ -19,6 +18,7 @@ enum AppRoute {
   home('/'),
   signIn('/sign-in'),
   signUp('/sign-up'),
+  locationGate('/location-gate'),
   books('/books'),
   bookDetail('/books/:id');
 
@@ -75,6 +75,15 @@ final routerProvider = Provider<GoRouter>((ref) {
         name: AppRoute.signUp.name,
         builder: (_, _) => const SignUpScreen(),
       ),
+
+      GoRoute(
+        path: AppRoute.locationGate.path,
+        name: AppRoute.locationGate.name,
+        builder: (_, state) {
+          final name = state.extra as String? ?? 'there';
+          return LocationGateScreen(profileName: name);
+        },
+      ),
       GoRoute(
         path: AppRoute.books.path,
         name: AppRoute.books.name,
@@ -104,9 +113,7 @@ class _InvalidBookRoute extends StatelessWidget {
       appBar: AppBar(),
       // AppErrorView only renders the message of a [Failure]; anything else
       // falls back to a generic string. So hand it one.
-      body: const AppErrorView(
-        error: NotFoundFailure('That book link is not valid.'),
-      ),
+      body: Text('Invalid book route. Please check the link and try again.'),
     );
   }
 }

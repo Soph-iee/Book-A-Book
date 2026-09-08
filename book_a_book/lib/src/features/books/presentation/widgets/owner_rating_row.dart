@@ -45,7 +45,7 @@ class OwnerRatingRow extends StatelessWidget {
                 )
               : null,
         ),
-        SizedBox(width: Insets.sm),
+        Insets.sm.horizontalSpace,
         Flexible(
           child: Text(
             name,
@@ -60,7 +60,7 @@ class OwnerRatingRow extends StatelessWidget {
             rating!.toStringAsFixed(1),
             style: AppTextStyle.ownerName.copyWith(color: AppColors.ink),
           ),
-          SizedBox(width: Insets.xs),
+          Insets.xs.horizontalSpace,
           Icon(Icons.star_rounded, size: 14.w, color: AppColors.star),
         ],
       ],

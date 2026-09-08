@@ -30,7 +30,7 @@ class TaglinePill extends StatelessWidget {
         children: [
           if (icon != null) ...[
             Icon(icon, size: 16.w, color: AppColors.brandGreen),
-            SizedBox(width: Insets.sm),
+            Insets.sm.horizontalSpace,
           ],
           Flexible(
             child: Text(

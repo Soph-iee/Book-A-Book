@@ -34,7 +34,7 @@ class AppLogo extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Icon(Icons.menu_book_rounded, size: size.w, color: color),
-        SizedBox(width: Insets.sm),
+        Insets.sm.horizontalSpace,
         Text(
           'Book-A-Book',
           style: AppTextStyle.wordmark.copyWith(color: color),

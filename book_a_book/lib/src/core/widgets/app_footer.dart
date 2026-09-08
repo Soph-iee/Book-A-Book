@@ -36,7 +36,7 @@ class AppFooter extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const AppLogo(variant: AppLogoVariant.light, size: 22),
-          SizedBox(height: Insets.md),
+          Insets.md.verticalSpace,
           Wrap(
             spacing: 16.w,
             runSpacing: Insets.sm,
@@ -53,7 +53,7 @@ class AppFooter extends StatelessWidget {
                 ),
             ],
           ),
-          SizedBox(height: Insets.md),
+          Insets.md.verticalSpace,
           Text(
             '©2026 Book-A-Book',
             style: AppTextStyle.footerLink.copyWith(

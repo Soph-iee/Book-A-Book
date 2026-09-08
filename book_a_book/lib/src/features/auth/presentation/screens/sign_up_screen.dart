@@ -1,46 +1,35 @@
+import 'package:book_a_book/src/features/auth/presentation/auth_validators.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/errors/failure.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_text_style.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/color.dart';
 import '../../../../core/widgets/app_text_field.dart';
 import '../../../../core/widgets/buttons.dart';
-import '../auth_validators.dart';
+import '../../presentation/view_models/auth_view_model.dart';
+import '../../../../core/supabase/supabase_providers.dart';
 import '../widgets/auth_scaffold.dart';
 
-/// Sign up.
-///
-/// TODO(backend): becomes a `ConsumerStatefulWidget` calling
-/// `ref.read(authControllerProvider.notifier).signUp(email:, password:, name:)`,
-/// with `isLoading` and the error SnackBar wired exactly as described in
-/// `sign_in_screen.dart`.
-class SignUpScreen extends StatefulWidget {
+class SignUpScreen extends ConsumerStatefulWidget {
   const SignUpScreen({super.key});
 
   @override
-  State<SignUpScreen> createState() => _SignUpScreenState();
+  ConsumerState<SignUpScreen> createState() => _SignUpScreenState();
 }
 
-class _SignUpScreenState extends State<SignUpScreen> {
+class _SignUpScreenState extends ConsumerState<SignUpScreen> {
   final _formKey = GlobalKey<FormState>();
   final _name = TextEditingController();
   final _email = TextEditingController();
   final _password = TextEditingController();
 
-  bool _isSubmitting = false;
-
-  /// Non-null once the form has been submitted, which swaps the form for the
-  /// confirmation state.
-  ///
-  /// TODO(backend): the real condition is "signUp succeeded but
-  /// `currentSessionProvider` is still null". If the Supabase project has email
-  /// confirmation enabled, `signUp` returns a `User` with **no `Session`** — the
-  /// user is not signed in and the router will not move, so a screen that
-  /// assumes success means signed-in appears to hang.
-  String? _pendingConfirmationFor;
+  bool _submitted = false;
+  bool _signUpSucceeded = false;
 
   @override
   void dispose() {
@@ -53,23 +42,36 @@ class _SignUpScreenState extends State<SignUpScreen> {
   Future<void> _submit() async {
     if (!(_formKey.currentState?.validate() ?? false)) return;
 
-    setState(() => _isSubmitting = true);
-    await Future<void>.delayed(const Duration(milliseconds: 600));
-    if (!mounted) return;
-
-    setState(() {
-      _isSubmitting = false;
-      _pendingConfirmationFor = _email.text.trim();
-    });
+    await ref
+        .read(authViewModelProvider.notifier)
+        .signUp(email: _email.text, password: _password.text, name: _name.text);
+    final callSucceeded = !ref.read(authViewModelProvider).hasError;
+    if (mounted && callSucceeded) {
+      setState(() {
+        _submitted = true;
+        _signUpSucceeded = true;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_pendingConfirmationFor != null) {
+    final authState = ref.watch(authViewModelProvider);
+
+    ref.listen(authViewModelProvider, (_, next) {
+      next.whenOrNull(
+        error: (error, _) => ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(_messageFor(error)))),
+      );
+    });
+
+    final hasSession = ref.watch(currentSessionProvider) != null;
+    if (_signUpSucceeded && !hasSession) {
       return _CheckYourInbox(
-        email: _pendingConfirmationFor!,
+        email: _email.text.trim(),
         onBackToSignIn: () => context.go(AppRoute.signIn.path),
-        onEditEmail: () => setState(() => _pendingConfirmationFor = null),
+        onEditEmail: () => setState(() => _submitted = false),
       );
     }
 
@@ -92,7 +94,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 autofillHints: const [AutofillHints.name],
                 validator: AuthValidators.name,
               ),
-              SizedBox(height: Insets.md),
+              Insets.md.verticalSpace,
               AppTextField(
                 controller: _email,
                 label: 'Email',
@@ -102,7 +104,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 autofillHints: const [AutofillHints.email],
                 validator: AuthValidators.email,
               ),
-              SizedBox(height: Insets.md),
+              Insets.md.verticalSpace,
               AppTextField(
                 controller: _password,
                 label: 'Password',
@@ -115,14 +117,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
             ],
           ),
         ),
-        SizedBox(height: Insets.lg),
+        Insets.lg.verticalSpace,
         PrimaryButton(
           label: 'Create account',
           expand: true,
-          isLoading: _isSubmitting,
+          isLoading: authState.isLoading,
           onPressed: _submit,
         ),
-        SizedBox(height: Insets.md),
+        Insets.md.verticalSpace,
         AuthSwitchRow(
           prompt: 'Already have an account?',
           action: 'Sign in',
@@ -130,6 +132,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
         ),
       ],
     );
+  }
+
+  String _messageFor(Object error) {
+    if (error is Failure) {
+      return authFriendlyMessage(error);
+    }
+    return 'Something went wrong. Please try again.';
   }
 }
 
@@ -163,7 +172,7 @@ class _CheckYourInbox extends StatelessWidget {
                 size: 24.w,
                 color: AppColors.brandGreen,
               ),
-              SizedBox(width: Insets.md),
+              Insets.md.horizontalSpace,
               Expanded(
                 child: Text.rich(
                   TextSpan(
@@ -194,13 +203,13 @@ class _CheckYourInbox extends StatelessWidget {
             ],
           ),
         ),
-        SizedBox(height: Insets.lg),
+        Insets.lg.verticalSpace,
         PrimaryButton(
           label: 'Back to sign in',
           expand: true,
           onPressed: onBackToSignIn,
         ),
-        SizedBox(height: Insets.sm),
+        Insets.sm.verticalSpace,
         Center(
           child: TextLinkButton(
             label: 'Use a different email',

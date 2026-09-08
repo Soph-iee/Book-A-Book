@@ -72,14 +72,14 @@ class AppErrorView extends StatelessWidget {
               size: 48.w,
               color: theme.colorScheme.error,
             ),
-            SizedBox(height: Insets.md),
+            Insets.md.verticalSpace,
             Text(
               message,
               textAlign: TextAlign.center,
               style: theme.textTheme.bodyLarge,
             ),
             if (onRetry != null) ...[
-              SizedBox(height: Insets.lg),
+              Insets.lg.verticalSpace,
               OutlinedButton.icon(
                 onPressed: onRetry,
                 icon: const Icon(Icons.refresh),
@@ -117,7 +117,7 @@ class EmptyStateView extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(icon, size: 48.w, color: theme.colorScheme.outline),
-            SizedBox(height: Insets.md),
+            Insets.md.verticalSpace,
             Text(
               message,
               textAlign: TextAlign.center,
@@ -125,7 +125,7 @@ class EmptyStateView extends StatelessWidget {
                 color: theme.colorScheme.onSurfaceVariant,
               ),
             ),
-            if (action != null) ...[SizedBox(height: Insets.lg), action!],
+            if (action != null) ...[Insets.lg.verticalSpace, action!],
           ],
         ),
       ),

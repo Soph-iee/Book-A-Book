@@ -54,21 +54,21 @@ class AuthScaffold extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   const Center(child: AppLogo(size: 32)),
-                  SizedBox(height: Insets.lg),
+                  Insets.lg.verticalSpace,
                   Text(
                     title,
                     style: AppTextStyle.heroTitle.copyWith(
                       color: AppColors.ink,
                     ),
                   ),
-                  SizedBox(height: Insets.xs),
+                  Insets.xs.verticalSpace,
                   Text(
                     subtitle,
                     style: AppTextStyle.heroBody.copyWith(
                       color: AppColors.inkMuted,
                     ),
                   ),
-                  SizedBox(height: Insets.xl),
+                  Insets.xl.verticalSpace,
                   ...children,
                 ],
               ),
@@ -103,7 +103,7 @@ class AuthSwitchRow extends StatelessWidget {
           prompt,
           style: AppTextStyle.body.copyWith(color: AppColors.inkMuted),
         ),
-        SizedBox(width: Insets.xs),
+        Insets.xs.horizontalSpace,
         GestureDetector(
           onTap: onTap,
           child: Text(

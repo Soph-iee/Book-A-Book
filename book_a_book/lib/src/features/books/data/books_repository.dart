@@ -5,6 +5,7 @@ import '../../../core/supabase/supabase_adapter.dart';
 import '../../../core/supabase/supabase_providers.dart';
 import '../../../core/supabase/tables.dart';
 import '../domain/book.dart';
+import 'models/book_api_model.dart';
 
 /// All book data access. Nothing above this layer knows Supabase exists.
 ///
@@ -16,11 +17,11 @@ class BooksRepository {
   final SupabaseAdapter _db;
 
   /// Embedded select. Because `books.owner_id` has exactly one foreign key to
-  /// `profiles`, PostgREST can resolve `owner:profiles(...)` without a hint.
+  /// `profile`, PostgREST can resolve `owner:profile(...)` without a hint.
   /// Tables with two FKs to the same table (like `book_requests`) need the
   /// explicit constraint name instead.
   static const String _withOwner =
-      '*, owner:${Tables.profiles}(id, name, avatar_url)';
+      '*, owner:${Tables.profile}(id, name, avatar_url, location_text)';
 
   // ---------------------------------------------------------------- read
 
@@ -33,7 +34,7 @@ class BooksRepository {
           .order('created_at', ascending: false)
           .range(offset, offset + limit - 1);
 
-      return rows.map(Book.fromMap).toList();
+      return rows.map((row) => BookApiModel.fromMap(row).toDomain()).toList();
     });
   }
 
@@ -47,7 +48,7 @@ class BooksRepository {
           .eq('id', id)
           .single();
 
-      return Book.fromMap(row);
+      return BookApiModel.fromMap(row).toDomain();
     });
   }
 
@@ -59,7 +60,24 @@ class BooksRepository {
           .eq('owner_id', ownerId)
           .order('created_at', ascending: false);
 
-      return rows.map(Book.fromMap).toList();
+      return rows.map((row) => BookApiModel.fromMap(row).toDomain()).toList();
+    });
+  }
+
+  /// Distinct, non-null genres across available books.
+  Future<List<String>> fetchAvailableGenres() {
+    return _db.run(() async {
+      final rows = await _db
+          .from(Tables.books)
+          .select('genre')
+          .eq('status', BookStatus.available.dbValue)
+          .not('genre', 'is', null);
+
+      return rows
+          .map((row) => row['genre'] as String)
+          .toSet()
+          .toList()
+        ..sort();
     });
   }
 
@@ -78,7 +96,7 @@ class BooksRepository {
           .or('title.ilike.%$term%,author.ilike.%$term%')
           .limit(limit);
 
-      return rows.map(Book.fromMap).toList();
+      return rows.map((row) => BookApiModel.fromMap(row).toDomain()).toList();
     });
   }
 
@@ -87,12 +105,12 @@ class BooksRepository {
   /// Caveat worth knowing: `.stream()` talks to the realtime socket, not
   /// PostgREST, so it cannot do embedded joins — `owner` will always be null
   /// here. Use [fetchAvailable] when you need the owner's name.
-  Stream<List<Book>> watchAvailable() {
+  Stream<List<BookApiModel>> watchAvailable() {
     return _db
         .stream(Tables.books)
         .eq('status', BookStatus.available.dbValue)
         .order('created_at')
-        .map((rows) => rows.map(Book.fromMap).toList())
+        .map((rows) => rows.map(BookApiModel.fromMap).toList())
         .handleError((Object error) => throw Failure.from(error));
   }
 
@@ -108,7 +126,7 @@ class BooksRepository {
           .select(_withOwner)
           .single();
 
-      return Book.fromMap(row);
+      return BookApiModel.fromMap(row).toDomain();
     });
   }
 
@@ -121,7 +139,7 @@ class BooksRepository {
           .select(_withOwner)
           .single();
 
-      return Book.fromMap(row);
+      return BookApiModel.fromMap(row).toDomain();
     });
   }
 

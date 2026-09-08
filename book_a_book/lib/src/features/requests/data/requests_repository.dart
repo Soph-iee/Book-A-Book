@@ -10,9 +10,9 @@ class RequestsRepository {
 
   final SupabaseAdapter _db;
 
-  /// `book_requests` has **two** foreign keys to `profiles` (`borrower_id` and
+  /// `book_requests` has **two** foreign keys to `profile` (`borrower_id` and
   /// `owner_id`), so PostgREST cannot guess which one you mean — an ambiguous
-  /// `profiles(...)` here returns a PGRST201 error. You must name the
+  /// `profile(...)` here returns a PGRST201 error. You must name the
   /// constraint explicitly with `!constraint_name`.
   ///
   /// Verify these names against your schema:
@@ -21,8 +21,8 @@ class RequestsRepository {
       '''
 *,
 book:${Tables.books}(id, title, author, cover_image_url, status),
-borrower:${Tables.profiles}!book_requests_borrower_id_fkey(id, name, avatar_url),
-owner:${Tables.profiles}!book_requests_owner_id_fkey(id, name, avatar_url)
+borrower:${Tables.profile}!book_requests_borrower_id_fkey(id, name, avatar_url),
+owner:${Tables.profile}!book_requests_owner_id_fkey(id, name, avatar_url)
 ''';
 
   /// Requests this user has made.

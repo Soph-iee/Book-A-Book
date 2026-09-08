@@ -13,7 +13,7 @@ presentation  ->  data  ->  (Supabase, via core/supabase/SupabaseAdapter)
 |---|---|---|
 | `domain/` | Plain Dart models + enums. No Flutter, no Supabase. | nothing |
 | `data/` | Repository + its Riverpod provider. The only layer that queries. | `domain`, `core` |
-| `presentation/` | `screens/`, `widgets/`, `controllers/`. | `domain`, `data`, `core` |
+| `presentation/` | `screens/`, `widgets/`, `view_models/`. | `domain`, `data`, `core` |
 
 ## Rules that keep this honest
 
@@ -21,7 +21,7 @@ presentation  ->  data  ->  (Supabase, via core/supabase/SupabaseAdapter)
    nowhere else.** `grep -r "supabase" lib/src/features` should only ever match
    `data/` files. That is a mechanical test for separation of concerns.
 2. **Repositories return domain types**, never `Map<String, dynamic>`.
-3. **Controllers hold UI state, repositories hold data access.** If a controller
+3. **View models hold UI state, repositories hold data access.** If a view model
    builds a query string, it is doing the repository's job.
 4. **Reusable widgets take data via constructor and emit callbacks.** A widget
    that reads a provider is welded to one screen's state.
@@ -36,10 +36,12 @@ Copy the shape of `books/`, which is the reference implementation:
 
 ```
 books/
-├── data/books_repository.dart              # queries + booksRepositoryProvider
+├── data/
+│   ├── books_repository.dart              # queries + booksRepositoryProvider
+│   └── models/book_api_model.dart         # raw API shape
 ├── domain/book.dart                        # Book, BookOwner, enums, fromMap
 └── presentation/
-    ├── controllers/books_controller.dart   # AsyncNotifier + family providers
+    ├── view_models/books_view_model.dart   # AsyncNotifier + family providers
     ├── screens/books_screen.dart           # layout + wiring only
     └── widgets/book_card.dart              # reusable, provider-free
 ```

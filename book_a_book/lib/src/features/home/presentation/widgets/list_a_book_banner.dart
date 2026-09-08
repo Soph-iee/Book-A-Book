@@ -43,7 +43,7 @@ class ListABookBanner extends StatelessWidget {
                 fit: BoxFit.contain,
                 errorBuilder: (_, _, _) => SizedBox(width: 72.w),
               ),
-              SizedBox(width: Insets.md),
+              Insets.md.horizontalSpace,
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -55,7 +55,7 @@ class ListABookBanner extends StatelessWidget {
                         color: AppColors.white,
                       ),
                     ),
-                    SizedBox(height: Insets.xs),
+                    Insets.xs.verticalSpace,
                     Text(
                       'List them and help others read.',
                       style: AppTextStyle.bannerBody.copyWith(
@@ -67,7 +67,7 @@ class ListABookBanner extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: Insets.md),
+          Insets.md.verticalSpace,
           // White fill, green label. The SecondaryButton's green border sits
           // against the green banner, so it reads as a plain white pill here.
           SecondaryButton(

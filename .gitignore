@@ -4,6 +4,8 @@
 # Local AI assistant instructions — personal to this machine, not project config.
 # The glob also catches OneDrive sync conflict copies like CLAUDE-Soph-PC.md.
 CLAUDE*.md
+AGENTS.md
+
 
 # OS
 .DS_Store

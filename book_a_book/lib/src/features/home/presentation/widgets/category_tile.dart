@@ -5,24 +5,7 @@ import '../../../../core/theme/app_text_style.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/color.dart';
 
-/// The five categories are **static presentation data**, not a database table.
-///
-/// `Book` carries a free-text `genre` and there is no `categories` table in
-/// `core/supabase/tables.dart`, so there is nothing to fetch. Icons come from
-/// the mapping in `01-design-system.md` — Material icons, not `assets/svg/`,
-/// which are `<pattern>`-filled rasters that `flutter_svg` renders blank.
-enum BookCategory {
-  business('Business', Icons.business_center_outlined),
-  selfHelp('Self Help', Icons.lightbulb_outline),
-  education('Education', Icons.school_outlined),
-  religious('Religious', Icons.church_outlined),
-  fiction('Fiction', Icons.menu_book_outlined);
-
-  const BookCategory(this.label, this.icon);
-
-  final String label;
-  final IconData icon;
-}
+/// A single genre tile in the home carousel.
 
 class CategoryTile extends StatelessWidget {
   const CategoryTile({
@@ -53,7 +36,7 @@ class CategoryTile extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(icon, size: 28.w, color: AppColors.white),
-              SizedBox(height: Insets.sm),
+              Insets.sm.verticalSpace,
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: Insets.xs),
                 child: Text(

@@ -63,10 +63,10 @@ class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
                   _Avatar(initials: avatarInitials)
                 else ...[
                   TextLinkButton(label: 'Login', onPressed: onLogin),
-                  SizedBox(width: Insets.xs),
+                  Insets.xs.horizontalSpace,
                   PrimaryButton(label: 'Sign Up', onPressed: onSignUp),
                 ],
-                SizedBox(width: Insets.xs),
+                Insets.xs.horizontalSpace,
                 IconButton(
                   onPressed: onMenu,
                   icon: Icon(Icons.menu, size: 24.w, color: AppColors.ink),

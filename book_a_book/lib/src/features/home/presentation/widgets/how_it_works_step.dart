@@ -41,13 +41,13 @@ class HowItWorksStep extends StatelessWidget {
           alignment: Alignment.center,
           child: Icon(icon, size: 28.w, color: AppColors.brandGreen),
         ),
-        SizedBox(height: Insets.sm),
+        Insets.sm.verticalSpace,
         Text(
           title,
           textAlign: TextAlign.center,
           style: AppTextStyle.stepTitle.copyWith(color: AppColors.ink),
         ),
-        SizedBox(height: Insets.xs),
+        Insets.xs.verticalSpace,
         Text(
           description,
           textAlign: TextAlign.center,

@@ -4,6 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'src/app.dart';
 import 'src/core/config/env.dart';
+import 'src/core/network/logging_http_client.dart';
 
 /// Bootstrap only. Everything else lives under `lib/src/`.
 ///
@@ -20,8 +21,8 @@ Future<void> main() async {
   await Supabase.initialize(
     url: Env.supabaseUrl,
     publishableKey: Env.supabasePublishableKey,
+    httpClient: LoggingHttpClient(),
   );
-
   // ProviderScope is where all Riverpod state lives. Nothing above it can read
   // a provider, which is why it wraps the app rather than sitting inside it.
   runApp(const ProviderScope(child: BookABookApp()));

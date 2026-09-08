@@ -1,99 +1,88 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-
-import '../../../../core/errors/failure.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_text_style.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/color.dart';
 import '../../../../core/widgets/async_value_view.dart';
 import '../../../../core/widgets/buttons.dart';
-import '../../data/sample_books.dart';
 import '../../domain/book.dart';
+import '../view_models/books_view_model.dart';
 import '../widgets/book_cover.dart';
 import '../widgets/escrow_stat.dart';
 import '../widgets/owner_rating_row.dart';
 
 /// The per-book page, reached by tapping a [BookCard].
 ///
-/// This is the one screen where a `CustomScrollView` earns its keep: the cover
-/// collapses into the app bar as you scroll.
-///
-/// TODO(backend): becomes a `ConsumerWidget` wrapping the body in
-///   AsyncValueView(value: ref.watch(bookByIdProvider(bookId)), builder: ...)
-/// `bookByIdProvider` was written for this screen and is currently referenced
-/// by nothing. `fetchById` selects with the `_withOwner` embed, so `book.owner`
-/// is populated, and `.single()` throws PGRST116 for a missing row, which
-/// `SupabaseAdapter` maps to `NotFoundFailure` — so a bad `:id` already has a
-/// defined outcome that `AppErrorView` renders.
-class BookDetailScreen extends StatelessWidget {
+/// A `CustomScrollView` earns its keep here: the cover collapses into the app
+/// bar as you scroll.
+class BookDetailScreen extends ConsumerWidget {
   const BookDetailScreen({super.key, required this.bookId});
 
   final int bookId;
 
   @override
-  Widget build(BuildContext context) {
-    final entry = sampleBookById(bookId);
-
-    if (entry == null) {
-      return Scaffold(
-        appBar: AppBar(),
-        body: const AppErrorView(error: NotFoundFailure()),
-      );
-    }
-
-    final book = entry.book;
+  Widget build(BuildContext context, WidgetRef ref) {
+    final asyncBook = ref.watch(bookByIdProvider(bookId));
 
     return Scaffold(
       backgroundColor: AppColors.white,
-      body: CustomScrollView(
-        slivers: [
-          _CoverAppBar(book: book),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: EdgeInsets.all(Insets.md),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _TitleBlock(book: book),
-                  SizedBox(height: Insets.lg),
-                  // `book.owner` is nullable. Hide the whole card rather than
-                  // rendering "null" — a book whose owner row was deleted
-                  // should still be readable.
-                  if (book.owner != null) ...[
-                    _OwnerCard(
-                      owner: book.owner!,
-                      location: entry.ownerLocation,
-                    ),
-                    SizedBox(height: Insets.lg),
-                  ],
-                  // Skip each section entirely when its field is null. Never
-                  // render an empty heading.
-                  if (book.aiSummary != null) ...[
-                    _Prose(
-                      heading: 'About this book',
-                      body: book.aiSummary!,
-                      aiGenerated: true,
-                    ),
-                    SizedBox(height: Insets.lg),
-                  ],
-                  if (book.whyRead != null) ...[
-                    _Prose(
-                      heading: 'Why read it',
-                      body: book.whyRead!,
-                      aiGenerated: true,
-                    ),
-                    SizedBox(height: Insets.lg),
-                  ],
-                  if (book.tags.isNotEmpty) _Tags(tags: book.tags),
+      body: AsyncValueView<Book>(
+        value: asyncBook,
+        onRetry: () => ref.invalidate(bookByIdProvider(bookId)),
+        builder: (book) => _BookDetailBody(book: book),
+      ),
+      bottomNavigationBar: _BorrowBar(book: asyncBook.value),
+    );
+  }
+}
+
+class _BookDetailBody extends StatelessWidget {
+  const _BookDetailBody({required this.book});
+
+  final Book book;
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomScrollView(
+      slivers: [
+        _CoverAppBar(book: book),
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: EdgeInsets.all(Insets.md),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _TitleBlock(book: book),
+                Insets.lg.verticalSpace,
+                if (book.owner != null) ...[
+                  _OwnerCard(owner: book.owner!),
+                  Insets.lg.verticalSpace,
                 ],
-              ),
+                if (book.aiSummary != null) ...[
+                  _Prose(
+                    heading: 'About this book',
+                    body: book.aiSummary!,
+                    aiGenerated: true,
+                  ),
+                  Insets.lg.verticalSpace,
+                ],
+                if (book.whyRead != null) ...[
+                  _Prose(
+                    heading: 'Why read it',
+                    body: book.whyRead!,
+                    aiGenerated: true,
+                  ),
+                  Insets.lg.verticalSpace,
+                ],
+                if (book.tags.isNotEmpty) _Tags(tags: book.tags),
+              ],
             ),
           ),
-        ],
-      ),
-      bottomNavigationBar: _BorrowBar(book: book),
+        ),
+      ],
     );
   }
 }
@@ -146,7 +135,7 @@ class _CoverAppBarState extends State<_CoverAppBar> {
             const SnackBar(content: Text('Sharing is not wired up yet.')),
           ),
         ),
-        SizedBox(width: Insets.sm),
+        Insets.sm.horizontalSpace,
       ],
       flexibleSpace: FlexibleSpaceBar(
         background: ColoredBox(
@@ -253,12 +242,12 @@ class _TitleBlock extends StatelessWidget {
           overflow: TextOverflow.ellipsis,
           style: AppTextStyle.heroTitle.copyWith(color: AppColors.ink),
         ),
-        SizedBox(height: Insets.xs),
+        Insets.xs.verticalSpace,
         Text(
           book.author,
           style: AppTextStyle.body.copyWith(color: AppColors.inkMuted),
         ),
-        SizedBox(height: Insets.md),
+        Insets.md.verticalSpace,
         Wrap(
           spacing: Insets.sm,
           runSpacing: Insets.sm,
@@ -313,10 +302,9 @@ class _Chip extends StatelessWidget {
 // ------------------------------------------------------------ 3 · Owner
 
 class _OwnerCard extends StatelessWidget {
-  const _OwnerCard({required this.owner, this.location});
+  const _OwnerCard({required this.owner});
 
   final BookOwner owner;
-  final String? location;
 
   @override
   Widget build(BuildContext context) {
@@ -336,26 +324,7 @@ class _OwnerCard extends StatelessWidget {
             rating: null,
             avatarSize: 40,
           ),
-          if (location != null) ...[
-            SizedBox(height: Insets.sm),
-            Row(
-              children: [
-                Icon(
-                  Icons.location_on_outlined,
-                  size: 14.w,
-                  color: AppColors.inkMuted,
-                ),
-                SizedBox(width: Insets.xs),
-                Text(
-                  location!,
-                  style: AppTextStyle.statLabel.copyWith(
-                    color: AppColors.inkMuted,
-                  ),
-                ),
-              ],
-            ),
-          ],
-          SizedBox(height: Insets.md),
+          Insets.md.verticalSpace,
           // TODO(backend): route to this owner's other books —
           // `BooksRepository.fetchByOwner(ownerId)` already exists to feed it.
           SecondaryButton(
@@ -393,13 +362,13 @@ class _Prose extends StatelessWidget {
           heading,
           style: AppTextStyle.sectionTitle.copyWith(color: AppColors.ink),
         ),
-        SizedBox(height: Insets.sm),
+        Insets.sm.verticalSpace,
         Text(body, style: AppTextStyle.body.copyWith(color: AppColors.ink)),
         // Presenting machine-written blurb as though it were publisher copy is
         // much easier to disclose now than to retrofit after someone complains
         // *(chosen)*.
         if (aiGenerated) ...[
-          SizedBox(height: Insets.xs),
+          Insets.xs.verticalSpace,
           Text(
             'Summary generated by AI',
             style: AppTextStyle.statLabel.copyWith(color: AppColors.inkFaint),
@@ -426,7 +395,7 @@ class _Tags extends StatelessWidget {
           'Tags',
           style: AppTextStyle.sectionTitle.copyWith(color: AppColors.ink),
         ),
-        SizedBox(height: Insets.sm),
+        Insets.sm.verticalSpace,
         Wrap(
           spacing: Insets.sm,
           runSpacing: Insets.sm,
@@ -456,9 +425,9 @@ class _Tags extends StatelessWidget {
 /// Pinned rather than scrolled-to: on a long page the primary action must never
 /// be below the fold.
 class _BorrowBar extends StatelessWidget {
-  const _BorrowBar({required this.book});
+  const _BorrowBar({this.book});
 
-  final Book book;
+  final Book? book;
 
   /// The button is not always "Borrow this book".
   ///
@@ -469,7 +438,7 @@ class _BorrowBar extends StatelessWidget {
   /// Getting this wrong lets people try to borrow their own books, which the
   /// RPC rejects anyway, but with a confusing error instead of a disabled
   /// button.
-  (String label, bool enabled) get _cta => switch (book.status) {
+  (String label, bool enabled) get _cta => switch (book!.status) {
     BookStatus.available => ('Borrow this book', true),
     BookStatus.requested => ('Requested', false),
     BookStatus.borrowed => ('Currently borrowed', false),
@@ -477,6 +446,10 @@ class _BorrowBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // While loading or on error, hide the bar — AsyncValueView handles the
+    // feedback; a disabled borrow button would only confuse.
+    if (book == null) return const SizedBox.shrink();
+
     final (label, enabled) = _cta;
 
     return Container(
@@ -498,7 +471,7 @@ class _BorrowBar extends StatelessWidget {
                       value: EscrowStat.placeholder,
                       label: 'escrow',
                     ),
-                    SizedBox(width: Insets.md),
+                    Insets.md.horizontalSpace,
                     const Flexible(
                       child: EscrowStat(
                         value: EscrowStat.placeholder,
@@ -509,7 +482,7 @@ class _BorrowBar extends StatelessWidget {
                   ],
                 ),
               ),
-              SizedBox(width: Insets.md),
+              Insets.md.horizontalSpace,
               PrimaryButton(
                 label: label,
                 onPressed: enabled ? () => _confirmBorrow(context) : null,
@@ -532,7 +505,7 @@ class _BorrowBar extends StatelessWidget {
   ///      the list controller into a loading state and makes the home carousel
   ///      flash a spinner while you borrow;
   ///   4. that controller invalidates both `bookByIdProvider(bookId)` and
-  ///      `booksControllerProvider`, because the RPC changed a row both are
+  ///      `booksViewModelProvider`, because the RPC changed a row both are
   ///      showing and neither refetches on its own;
   ///   5. failures go through `ref.listen` + SnackBar, switching over the
   ///      sealed `Failure` hierarchy — `DatabaseFailure` is the lost race, and
@@ -556,21 +529,21 @@ class _BorrowBar extends StatelessWidget {
                 'Borrow this book?',
                 style: AppTextStyle.sectionTitle.copyWith(color: AppColors.ink),
               ),
-              SizedBox(height: Insets.sm),
+              Insets.sm.verticalSpace,
               Text(
-                book.title,
+                book!.title,
                 style: AppTextStyle.cardTitle.copyWith(
                   color: AppColors.brandGreen,
                 ),
               ),
-              SizedBox(height: Insets.md),
+              Insets.md.verticalSpace,
               Row(
                 children: [
                   const EscrowStat(
                     value: EscrowStat.placeholder,
                     label: 'escrow',
                   ),
-                  SizedBox(width: Insets.xl),
+                  Insets.xl.horizontalSpace,
                   const EscrowStat(
                     value: EscrowStat.placeholder,
                     label: 'borrow period',
@@ -578,13 +551,13 @@ class _BorrowBar extends StatelessWidget {
                   ),
                 ],
               ),
-              SizedBox(height: Insets.md),
+              Insets.md.verticalSpace,
               Text(
                 'Your escrow is refundable when you return the book in good '
                 'condition.',
                 style: AppTextStyle.body.copyWith(color: AppColors.inkMuted),
               ),
-              SizedBox(height: Insets.lg),
+              Insets.lg.verticalSpace,
               PrimaryButton(
                 label: 'Confirm and pay escrow',
                 expand: true,
@@ -597,7 +570,7 @@ class _BorrowBar extends StatelessWidget {
                   );
                 },
               ),
-              SizedBox(height: Insets.sm),
+              Insets.sm.verticalSpace,
               SecondaryButton(
                 label: 'Cancel',
                 expand: true,
