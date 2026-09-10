@@ -1,49 +1,87 @@
-# Features
+# Book-A-Book
 
-Each feature is a vertical slice, split into three layers. The dependency
-direction is strictly one way:
+A peer-to-peer book lending platform built with Flutter. Browse books near you, borrow with refundable escrow, and manage requests — all connected through a Supabase backend.
+
+## What it does
+
+Book-A-Book connects readers who want to lend and borrow physical books. Signed-out visitors can browse the public catalogue. Once signed in, users can  request books, borrow books, list books and track incoming/outgoing requests, and manage their profile.
+
+The app is built around proximity: books are shown "near you", and location is required before browsing. The design targets a minimum of 393×852 mobile canvas, but the same codebase runs on Windows desktop.
+
+## Tech stack
+
+| Layer | Choice |
+|---|---|
+| UI | Flutter, Material 3, `flutter_screenutil` |
+| State | Riverpod (`flutter_riverpod`, `riverpod_annotation`) |
+| Routing | `go_router` |
+| Backend | Supabase (`supabase_flutter`) — PostgREST + Auth + Storage |
+| Location | `geolocator` |
+| Networking | `http`, custom `LoggingHttpClient` |
+| Serialization | `json_annotation` / `freezed_annotation` |
+| Desktop | Windows support via Flutter's desktop embedding |
+
+## Features
+
+- **Public landing page** — browse genres and available books without signing in
+- **Authentication** — sign in, sign up, password reset via Supabase Auth
+- **Book catalogue** — search by title/author, filter by genre, horizontal carousels
+- **Book detail** — cover gallery, owner card, AI summary, tags, borrow CTA
+- **Borrow flow** — refundable escrow confirmation before borrowing
+- **Request management** — incoming and outgoing borrow requests (in progress)
+- **Profile** — avatar, location text, name (in progress)
+- **Onboarding** — location gate after sign-up (GPS or manual entry)
+
+
+
+## Project structure
 
 ```
-presentation  ->  data  ->  (Supabase, via core/supabase/SupabaseAdapter)
-      |             |
-      +------> domain <------+
+book_a_book/
+├── lib/src/
+│   ├── app.dart
+│   ├── core/
+│   │   ├── config/env.dart
+│   │   ├── errors/failure.dart
+│   │   ├── network/logging_http_client.dart
+│   │   ├── router/app_router.dart
+│   │   ├── services/location_service.dart
+│   │   ├── supabase/
+│   │   │   ├── supabase_adapter.dart
+│   │   │   ├── supabase_providers.dart
+│   │   │   └── tables.dart
+│   │   ├── theme/
+│   │   └── widgets/
+│   └── features/
+│       ├── auth/
+│       │   ├── data/auth_repository.dart
+│       │   ├── domain/auth_user.dart
+│       │   │   auth_session.dart
+│       │   └── presentation/
+│       │       ├── view_models/auth_view_model.dart
+│       │       ├── screens/sign_in_screen.dart
+│       │       └── screens/sign_up_screen.dart
+│       ├── books/
+│       │   ├── data/
+│       │   │   ├── models/book_api_model.dart
+│       │   │   └── books_repository.dart
+│       │   ├── domain/book.dart
+│       │   └── presentation/
+│       │       ├── view_models/books_view_model.dart
+│       │       ├── screens/books_screen.dart
+│       │       ├── screens/book_detail_screen.dart
+│       │       └── widgets/book_card.dart
+│       ├── home/
+│       ├── onboarding/
+│       ├── profile/
+│       └── requests/
+├── docs/design/
+├── assets/
+│   ├── images/
+│   └── svg/
+├── dart_define.example.json
+├── dart_define.json
+└── pubspec.yaml
 ```
 
-| Folder | Contains | May import |
-|---|---|---|
-| `domain/` | Plain Dart models + enums. No Flutter, no Supabase. | nothing |
-| `data/` | Repository + its Riverpod provider. The only layer that queries. | `domain`, `core` |
-| `presentation/` | `screens/`, `widgets/`, `view_models/`. | `domain`, `data`, `core` |
 
-## Rules that keep this honest
-
-1. **`SupabaseClient` appears in `core/supabase/supabase_adapter.dart` and
-   nowhere else.** `grep -r "supabase" lib/src/features` should only ever match
-   `data/` files. That is a mechanical test for separation of concerns.
-2. **Repositories return domain types**, never `Map<String, dynamic>`.
-3. **View models hold UI state, repositories hold data access.** If a view model
-   builds a query string, it is doing the repository's job.
-4. **Reusable widgets take data via constructor and emit callbacks.** A widget
-   that reads a provider is welded to one screen's state.
-5. **`core/` never imports `features/`.** One-way, or you get import cycles.
-6. **Cross-feature coupling goes through `domain/`**, or not at all. `books`
-   defines its own small `BookOwner` rather than importing the whole `profile`
-   feature — see `books/domain/book.dart`.
-
-## Adding a feature
-
-Copy the shape of `books/`, which is the reference implementation:
-
-```
-books/
-├── data/
-│   ├── books_repository.dart              # queries + booksRepositoryProvider
-│   └── models/book_api_model.dart         # raw API shape
-├── domain/book.dart                        # Book, BookOwner, enums, fromMap
-└── presentation/
-    ├── view_models/books_view_model.dart   # AsyncNotifier + family providers
-    ├── screens/books_screen.dart           # layout + wiring only
-    └── widgets/book_card.dart              # reusable, provider-free
-```
-
-`requests/` and `profile/` are stubbed to that shape and still need filling in.
