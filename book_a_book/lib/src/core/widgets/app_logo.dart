@@ -7,11 +7,7 @@ import '../theme/color.dart';
 
 enum AppLogoVariant { dark, light }
 
-/// The wordmark. Used in the header (dark on cream) and the footer (white on
-/// green), so it needs both inks.
-///
-/// Mark and wordmark take the *same* colour — the mockup's logo is single-ink
-/// in each context.
+
 class AppLogo extends StatelessWidget {
   const AppLogo({
     super.key,

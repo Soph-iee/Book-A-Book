@@ -1,17 +1,13 @@
+import 'package:book_a_book/src/core/router/router_enum.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-
-import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_text_style.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/color.dart';
 import '../../../../core/widgets/app_logo.dart';
 
-/// The shell both auth screens share.
-///
-/// Cream rather than white *(chosen)* — it matches the hero the user just came
-/// from, and keeps the white form fields distinct from the page.
+
 class AuthScaffold extends StatelessWidget {
   const AuthScaffold({
     super.key,
@@ -35,17 +31,14 @@ class AuthScaffold extends StatelessWidget {
         leading: IconButton(
           icon: Icon(Icons.arrow_back, size: 22.w, color: AppColors.ink),
           tooltip: 'Back',
-          // `context.go` from the header replaces rather than pushes, so there
-          // is often nothing to pop back to.
+    
           onPressed: () =>
               context.canPop() ? context.pop() : context.go(AppRoute.home.path),
         ),
       ),
       body: SafeArea(
         child: Center(
-          // Not optional: the keyboard takes roughly half the viewport, and
-          // without this a form of this height overflows the moment a field is
-          // focused.
+   
           child: SingleChildScrollView(
             padding: EdgeInsets.all(Insets.md),
             child: ConstrainedBox(
@@ -80,8 +73,7 @@ class AuthScaffold extends StatelessWidget {
   }
 }
 
-/// "New here? **Sign up**" — the row that replaces the old `_isRegistering`
-/// toggle.
+
 class AuthSwitchRow extends StatelessWidget {
   const AuthSwitchRow({
     super.key,

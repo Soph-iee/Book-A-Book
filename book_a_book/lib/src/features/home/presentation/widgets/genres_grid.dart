@@ -6,11 +6,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/theme/app_text_style.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/color.dart';
+import 'grid_states.dart';
 
-/// A flat 2x2 genre tile, distinct from the existing green [CategoryTile] which
-/// is meant for a horizontal pill-row carousel. The mockup shows the genres as
-/// white cards on cream with a green icon and dark label, so this is its own
-/// widget rather than a recoloured twin.
 class GenreGridTile extends StatelessWidget {
   const GenreGridTile({
     super.key,
@@ -62,9 +59,6 @@ class GenreGridTile extends StatelessWidget {
   }
 }
 
-/// 2x2 grid of genres driven by the async [availableGenresProvider]. The grid
-/// is fixed at four slots: it shows the first four available genres and renders
-/// placeholders for any missing slots so the layout never collapses.
 class GenresGrid extends ConsumerWidget {
   const GenresGrid({super.key, required this.onGenreTap});
 
@@ -96,11 +90,10 @@ class GenresGrid extends ConsumerWidget {
           ),
           Insets.sm.verticalSpace,
           asyncGenres.when(
-            loading: () => const _GridSkeleton(),
-            error: (_, _) => const _GridError(),
+            loading: () => const GridSkeleton(),
+            error: (_, _) => const GridError(),
             data: (genres) {
               final items = genres.take(4).toList();
-              // Pad to four so the grid keeps its 2x2 shape.
               while (items.length < 4) {
                 items.add('—');
               }
@@ -127,44 +120,6 @@ class GenresGrid extends ConsumerWidget {
             },
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _GridSkeleton extends StatelessWidget {
-  const _GridSkeleton();
-  @override
-  Widget build(BuildContext context) {
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: Insets.md,
-        mainAxisSpacing: Insets.md,
-        mainAxisExtent: 64.h,
-      ),
-      itemCount: 4,
-      itemBuilder: (_, _) => Container(
-        decoration: BoxDecoration(
-          color: AppColors.white,
-          borderRadius: AppRadius.mdAll,
-        ),
-      ),
-    );
-  }
-}
-
-class _GridError extends StatelessWidget {
-  const _GridError();
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: Insets.md),
-      child: Text(
-        'Could not load genres.',
-        style: AppTextStyle.body.copyWith(color: AppColors.inkMuted),
       ),
     );
   }

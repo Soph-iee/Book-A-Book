@@ -1,31 +1,20 @@
-import 'package:book_a_book/src/features/books/domain/book.dart';
+import 'package:book_a_book/src/core/router/router_enum.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-
-import '../../../../core/router/app_router.dart';
 import '../../../../core/supabase/supabase_providers.dart';
-import '../../../../core/theme/app_text_style.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/color.dart';
 import '../../../../core/widgets/app_top_bar.dart';
-import '../../../../core/widgets/async_value_view.dart';
 import '../../../../core/widgets/buttons.dart';
-import '../../../books/presentation/view_models/books_view_model.dart';
-import '../../../books/presentation/widgets/book_card.dart';
+import '../widgets/available_section.dart';
 import '../widgets/genres_grid.dart';
 import '../widgets/greeting_section.dart';
 import '../widgets/home_bottom_nav.dart';
 import '../widgets/home_search_bar.dart';
 
-/// Signed-in home at `/`: greeting, search, genres, available books, and a
-/// bottom nav shell.
-///
-/// Stays a `ConsumerStatefulWidget` because the bottom-nav selection is local
-/// UI state — it does not belong in a provider, and it does not survive
-/// navigation. Session-driven state (signed-in flag, avatar initials) is read
-/// from [currentSessionProvider] on every rebuild.
+
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
@@ -56,8 +45,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     setState(() => _navIndex = i);
     switch (i) {
       case HomeBottomNav.listIndex:
-        // TODO(backend): gate on `currentSessionProvider != null` and route to
-        // the list-a-book form; signed out → `/sign-in`.
+   
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('List a Book is not wired up yet.')),
         );
@@ -108,9 +96,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       name: displayName,
                       location: 'Yaba, Lagos',
                       onLocationTap: () {
-                        // TODO(backend): open a location picker. The
-                        // `LocationService` in core/services already provides
-                        // a GPS + manual entry flow that can be reused.
+                       
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                             content: Text('Location picker is not wired up yet.'),
@@ -137,7 +123,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       ),
                     ),
                     Insets.lg.verticalSpace,
-                    _AvailableSection(
+                    AvailableSection(
                       onViewAll: () => context.go(AppRoute.books.path),
                     ),
                     Insets.md.verticalSpace,
@@ -162,70 +148,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         currentIndex: _navIndex,
         onTap: _onNavTap,
       ),
-    );
-  }
-}
-
-// -------------------------------------------------- Available near you
-
-class _AvailableSection extends ConsumerWidget {
-  const _AvailableSection({required this.onViewAll});
-
-  final VoidCallback onViewAll;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final asyncBooks = ref.watch(booksViewModelProvider);
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: Insets.md),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Flexible(
-                child: Text(
-                  'Available near you',
-                  style: AppTextStyle.sectionTitle.copyWith(color: AppColors.ink),
-                ),
-              ),
-              TextLinkButton(label: 'See all', onPressed: onViewAll),
-            ],
-          ),
-        ),
-        Insets.sm.verticalSpace,
-        SizedBox(
-          height: 260.h,
-          child: AsyncValueView<List<Book>>(
-            value: asyncBooks,
-            onRetry: () => ref.invalidate(booksViewModelProvider),
-            builder: (books) {
-              if (books.isEmpty) {
-                return const EmptyStateView(
-                  message: 'No books available right now.',
-                );
-              }
-              return ListView.separated(
-                scrollDirection: Axis.horizontal,
-                padding: EdgeInsets.symmetric(horizontal: Insets.md),
-                itemCount: books.length,
-                separatorBuilder: (_, _) => Insets.md.horizontalSpace,
-                itemBuilder: (context, i) {
-                  final entry = books[i];
-                  return BookCard(
-                    book: entry,
-                    ownerLocation: entry.owner?.locationText,
-                    ownerRating: null,
-                    onTap: () => context.go(AppRoute.bookDetailPath(entry.id)),
-                  );
-                },
-              );
-            },
-          ),
-        ),
-      ],
     );
   }
 }
