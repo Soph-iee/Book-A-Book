@@ -60,7 +60,7 @@ class Book {
       aiSummary: map['ai_summary'] as String?,
       genre: map['genre'] as String?,
       whyRead: map['why_read'] as String?,
-        tags: Book.stringList(map['tags']),
+      tags: Book.stringList(map['tags']),
       createdAt: Book.dateTime(map['created_at']),
       owner: map['owner'] is Map<String, dynamic>
           ? BookOwner.fromMap(map['owner'] as Map<String, dynamic>)
@@ -148,8 +148,12 @@ class Book {
 /// books feature does not import the profile feature, so the two stay
 /// independently changeable.
 class BookOwner {
-  const BookOwner({required this.id, required this.name, this.avatarUrl,     this.locationText,          // add
-});
+  const BookOwner({
+    required this.id,
+    required this.name,
+    this.avatarUrl,
+    this.locationText, // add
+  });
 
   final int id;
   final String name;
@@ -160,8 +164,7 @@ class BookOwner {
     id: map['id'] as int,
     name: map['name'] as String? ?? 'Unknown',
     avatarUrl: map['avatar_url'] as String?,
-        locationText: map['location_text'] as String?,   // add
-
+    locationText: map['location_text'] as String?, // add
   );
 }
 

@@ -7,7 +7,6 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/color.dart';
 import '../../../../core/widgets/app_logo.dart';
 
-
 class AuthScaffold extends StatelessWidget {
   const AuthScaffold({
     super.key,
@@ -31,14 +30,13 @@ class AuthScaffold extends StatelessWidget {
         leading: IconButton(
           icon: Icon(Icons.arrow_back, size: 22.w, color: AppColors.ink),
           tooltip: 'Back',
-    
+
           onPressed: () =>
               context.canPop() ? context.pop() : context.go(AppRoute.home.path),
         ),
       ),
       body: SafeArea(
         child: Center(
-   
           child: SingleChildScrollView(
             padding: EdgeInsets.all(Insets.md),
             child: ConstrainedBox(
@@ -72,7 +70,6 @@ class AuthScaffold extends StatelessWidget {
     );
   }
 }
-
 
 class AuthSwitchRow extends StatelessWidget {
   const AuthSwitchRow({

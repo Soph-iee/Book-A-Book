@@ -82,7 +82,11 @@ class _LocationChip extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.location_on_outlined, size: 14.w, color: AppColors.brandGreen),
+            Icon(
+              Icons.location_on_outlined,
+              size: 14.w,
+              color: AppColors.brandGreen,
+            ),
             Insets.xs.horizontalSpace,
             Flexible(
               child: Text(

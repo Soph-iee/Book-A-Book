@@ -40,27 +40,22 @@ class AuthRepository {
 
   Stream<AuthState> get onAuthStateChange => _db.auth.onAuthStateChange;
 
-  Future<AuthUser> signIn({
-    required String email,
-    required String password,
-  }) {
-    return _db.run(
-      () async {
-        final response = await _db.auth.signInWithPassword(
-          email: email,
-          password: password,
-        );
-        final user = response.user;
-        if (user == null) {
-          throw const AuthException('Sign-in failed: no user returned.');
-        }
-        return AuthUser(
-          id: user.id,
-          email: user.email ?? '',
-          name: user.userMetadata?['name'] as String?,
-        );
-      },
-    );
+  Future<AuthUser> signIn({required String email, required String password}) {
+    return _db.run(() async {
+      final response = await _db.auth.signInWithPassword(
+        email: email,
+        password: password,
+      );
+      final user = response.user;
+      if (user == null) {
+        throw const AuthException('Sign-in failed: no user returned.');
+      }
+      return AuthUser(
+        id: user.id,
+        email: user.email ?? '',
+        name: user.userMetadata?['name'] as String?,
+      );
+    });
   }
 
   /// Anything passed as `data` lands in `auth.users.raw_user_meta_data`, which
@@ -69,7 +64,8 @@ class AuthRepository {
   /// the client, because the row must exist before the client is trusted.
   ///
   ///
-  static const String kEmailRedirectTo = 'io.supabase.flutterquickstart://login-callback';
+  static const String kEmailRedirectTo =
+      'io.supabase.flutterquickstart://login-callback';
 
   Future<AuthUser> signUp({
     required String email,
@@ -77,25 +73,23 @@ class AuthRepository {
     required String name,
     String? redirectTo = kEmailRedirectTo,
   }) {
-    return _db.run(
-      () async {
-        final response = await _db.auth.signUp(
-          email: email,
-          password: password,
-          data: {'name': name},
-          emailRedirectTo: redirectTo ?? kEmailRedirectTo,
-        );
-        final user = response.user;
-        if (user == null) {
-          throw const AuthException('Sign-up failed: no user returned.');
-        }
-        return AuthUser(
-          id: user.id,
-          email: user.email ?? '',
-          name: user.userMetadata?['name'] as String?,
-        );
-      },
-    );
+    return _db.run(() async {
+      final response = await _db.auth.signUp(
+        email: email,
+        password: password,
+        data: {'name': name},
+        emailRedirectTo: redirectTo ?? kEmailRedirectTo,
+      );
+      final user = response.user;
+      if (user == null) {
+        throw const AuthException('Sign-up failed: no user returned.');
+      }
+      return AuthUser(
+        id: user.id,
+        email: user.email ?? '',
+        name: user.userMetadata?['name'] as String?,
+      );
+    });
   }
 
   Future<void> signOut() => _db.run(() => _db.auth.signOut());

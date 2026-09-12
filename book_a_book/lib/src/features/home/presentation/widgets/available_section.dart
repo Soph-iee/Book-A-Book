@@ -31,7 +31,9 @@ class AvailableSection extends ConsumerWidget {
               Flexible(
                 child: Text(
                   'Available near you',
-                  style: AppTextStyle.sectionTitle.copyWith(color: AppColors.ink),
+                  style: AppTextStyle.sectionTitle.copyWith(
+                    color: AppColors.ink,
+                  ),
                 ),
               ),
               TextLinkButton(label: 'See all', onPressed: onViewAll),

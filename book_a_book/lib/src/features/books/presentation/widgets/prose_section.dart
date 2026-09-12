@@ -10,7 +10,7 @@ class ProseSection extends StatelessWidget {
     required this.heading,
     required this.body,
     this.aiGenerated = false,
-    super.key
+    super.key,
   });
 
   final String heading;

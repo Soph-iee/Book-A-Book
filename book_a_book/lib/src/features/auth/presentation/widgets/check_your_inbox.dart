@@ -8,7 +8,7 @@ import '../../../../core/widgets/buttons.dart';
 import '../widgets/auth_scaffold.dart';
 
 class CheckYourInbox extends StatelessWidget {
-  const CheckYourInbox({
+  const CheckYourInbox({ super.key,
     required this.email,
     required this.onBackToSignIn,
     required this.onEditEmail,

@@ -41,7 +41,7 @@ abstract final class AppColors {
 
   /// The footer copyright, which sits on `brandGreen`.
   static Color get whiteMuted => white.withValues(alpha: 0.70);
-    static const Color surface = Color(0xFFf8faf4);
+  static const Color surface = Color(0xFFf8faf4);
   static const Color surfaceDim = Color(0xFFd8dbd5);
   static const Color surfaceBright = Color(0xFFf8faf4);
   static const Color surfaceContainerLowest = Color(0xFFffffff);
@@ -89,4 +89,3 @@ abstract final class AppColors {
   static const Color onBackground = Color(0xFF191c19);
   static const Color surfaceVariant = Color(0xFFe1e3de);
 }
-
