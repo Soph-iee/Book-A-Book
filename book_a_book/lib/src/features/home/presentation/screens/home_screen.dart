@@ -14,7 +14,6 @@ import '../widgets/greeting_section.dart';
 import '../widgets/home_bottom_nav.dart';
 import '../widgets/home_search_bar.dart';
 
-
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
@@ -35,7 +34,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   String _displayNameFromSession() {
     final session = ref.watch(currentSessionProvider);
     final meta = session?.user.userMetadata;
-    final name = (meta?['full_name'] as String?) ??
+    final name =
+        (meta?['full_name'] as String?) ??
         (meta?['name'] as String?) ??
         session?.user.email?.split('@').first;
     return name?.trim().isNotEmpty == true ? name! : 'there';
@@ -45,7 +45,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     setState(() => _navIndex = i);
     switch (i) {
       case HomeBottomNav.listIndex:
-   
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('List a Book is not wired up yet.')),
         );
@@ -96,10 +95,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       name: displayName,
                       location: 'Yaba, Lagos',
                       onLocationTap: () {
-                       
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                            content: Text('Location picker is not wired up yet.'),
+                            content: Text(
+                              'Location picker is not wired up yet.',
+                            ),
                           ),
                         );
                       },
@@ -117,10 +117,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     ),
                     Insets.lg.verticalSpace,
                     GenresGrid(
-                      onGenreTap: (genre) => context.go(
-                        AppRoute.books.path,
-                        extra: genre,
-                      ),
+                      onGenreTap: (genre) =>
+                          context.go(AppRoute.books.path, extra: genre),
                     ),
                     Insets.lg.verticalSpace,
                     AvailableSection(

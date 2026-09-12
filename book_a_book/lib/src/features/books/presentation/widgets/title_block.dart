@@ -44,7 +44,12 @@ class TitleBlock extends StatelessWidget {
 }
 
 class DetailChip extends StatelessWidget {
-  const DetailChip({required this.label, this.filled = false, this.onTap});
+  const DetailChip({
+    super.key,
+    required this.label,
+    this.filled = false,
+    this.onTap,
+  });
 
   final String label;
   final bool filled;

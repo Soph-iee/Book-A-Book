@@ -6,8 +6,7 @@ sealed class LocationException implements Exception {
 
   final String message;
 
-  const factory LocationException.servicesDisabled() =
-      _ServicesDisabled;
+  const factory LocationException.servicesDisabled() = _ServicesDisabled;
   const factory LocationException.permissionDenied() = _PermissionDenied;
   const factory LocationException.permissionDeniedForever() =
       _PermissionDeniedForever;
@@ -25,8 +24,10 @@ class _PermissionDenied extends LocationException {
 
 class _PermissionDeniedForever extends LocationException {
   const _PermissionDeniedForever()
-      : super('Location permission is permanently denied. '
-            'Enable it in your device settings.');
+    : super(
+        'Location permission is permanently denied. '
+        'Enable it in your device settings.',
+      );
 }
 
 class _Timeout extends LocationException {

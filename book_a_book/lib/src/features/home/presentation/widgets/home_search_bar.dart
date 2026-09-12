@@ -10,11 +10,7 @@ import '../../../../core/theme/color.dart';
 /// here. Tapping the bar fires [onTap] so the parent can push a search route
 /// or open an inline results sheet.
 class HomeSearchBar extends StatelessWidget {
-  const HomeSearchBar({
-    super.key,
-    required this.onTap,
-    this.onFilterTap,
-  });
+  const HomeSearchBar({super.key, required this.onTap, this.onFilterTap});
 
   final VoidCallback onTap;
   final VoidCallback? onFilterTap;
@@ -41,7 +37,9 @@ class HomeSearchBar extends StatelessWidget {
                 Expanded(
                   child: Text(
                     'Search by title, author or genre',
-                    style: AppTextStyle.body.copyWith(color: AppColors.inkFaint),
+                    style: AppTextStyle.body.copyWith(
+                      color: AppColors.inkFaint,
+                    ),
                   ),
                 ),
                 if (onFilterTap != null)
