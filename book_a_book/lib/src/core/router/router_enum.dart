@@ -1,5 +1,10 @@
 enum AppRoute {
   home('/'),
+  onboardingWelcome('/onboarding/welcome'),
+  onboardingGenres('/onboarding/genres'),
+  onboardingHowItWorks('/onboarding/how-it-works'),
+  onboardingLocation('/onboarding/location'),
+  onboardingResults('/onboarding/results'),
   signIn('/sign-in'),
   signUp('/sign-up'),
   locationGate('/location-gate'),
