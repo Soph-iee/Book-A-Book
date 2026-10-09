@@ -2,6 +2,10 @@ import 'dart:async';
 
 import 'package:book_a_book/src/core/router/invalid_book_route.dart';
 import 'package:book_a_book/src/core/router/router_enum.dart';
+import 'package:book_a_book/src/features/onboarding/presentation/genre_selection_screen.dart';
+import 'package:book_a_book/src/features/onboarding/presentation/how_it_works_screen.dart';
+import 'package:book_a_book/src/features/onboarding/presentation/recommendation_screen.dart';
+import 'package:book_a_book/src/features/onboarding/widgets/onboarding_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -12,6 +16,7 @@ import '../../features/books/presentation/screens/book_detail_screen.dart';
 import '../../features/books/presentation/screens/books_screen.dart';
 import '../../features/home/presentation/screens/home_screen.dart';
 import '../../features/onboarding/presentation/location_gate_screen.dart';
+import '../../features/onboarding/presentation/location_onboarding_screen.dart';
 import '../supabase/supabase_providers.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
@@ -19,10 +24,35 @@ final routerProvider = Provider<GoRouter>((ref) {
   ref.onDispose(refresh.dispose);
 
   return GoRouter(
-    initialLocation: AppRoute.home.path,
+    initialLocation: AppRoute.onboardingWelcome.path,
 
     refreshListenable: refresh,
     routes: [
+      GoRoute(
+        path: AppRoute.onboardingWelcome.path,
+        name: AppRoute.onboardingWelcome.name,
+        builder: (_, _) => const OnboardingScreen(),
+      ),
+      GoRoute(
+        path: AppRoute.onboardingGenres.path,
+        name: AppRoute.onboardingGenres.name,
+        builder: (_, _) => const GenreSelectionScreen(),
+      ),
+      GoRoute(
+        path: AppRoute.onboardingHowItWorks.path,
+        name: AppRoute.onboardingHowItWorks.name,
+        builder: (_, _) => const HowItWorksScreen(),
+      ),
+      GoRoute(
+        path: AppRoute.onboardingLocation.path,
+        name: AppRoute.onboardingLocation.name,
+        builder: (_, _) => const LocationOnboardingScreen(),
+      ),
+      GoRoute(
+        path: AppRoute.onboardingResults.path,
+        name: AppRoute.onboardingResults.name,
+        builder: (_, _) => const RecommendationsScreen(),
+      ),
       GoRoute(
         path: AppRoute.home.path,
         name: AppRoute.home.name,

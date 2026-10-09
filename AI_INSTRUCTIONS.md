@@ -19,6 +19,13 @@ On first use in any chat response or code comment, write the full meaning follow
 - Do not add comments unless explicitly requested. When comments are present in the surrounding code, match their style.
 - Never commit secrets or keys. Handle errors through the project's existing failure types rather than raw exceptions.
 
+## 3. Use ScreenUtil spacing extensions
+
+- Do not use `SizedBox` explicitly for spacing gaps.
+- Use `Insets.xs.verticalSpace`, `Insets.sm.verticalSpace`, or the matching inset for vertical gaps.
+- Use `Insets.xs.horizontalSpace`, `Insets.sm.horizontalSpace`, or the matching inset for horizontal gaps.
+- Keep `SizedBox` when it provides a child or establishes an explicit layout constraint rather than acting only as a gap.
+
 ## Scope
 
 These two rules are the baseline. Project-specific guidance (for example, the Codex-oriented `AGENTS.md`) remains in effect where it does not conflict with the rules above.

@@ -7,7 +7,6 @@ import '../theme/color.dart';
 
 enum AppLogoVariant { dark, light }
 
-
 class AppLogo extends StatelessWidget {
   const AppLogo({
     super.key,

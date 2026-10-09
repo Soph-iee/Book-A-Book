@@ -4,7 +4,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/theme/color.dart';
 
 class ScrimmedIcon extends StatelessWidget {
-  const ScrimmedIcon({ super.key,
+  const ScrimmedIcon({
+    super.key,
     required this.icon,
     required this.tooltip,
     required this.onPressed,

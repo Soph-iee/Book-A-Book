@@ -60,16 +60,6 @@ class LoggingHttpClient extends http.BaseClient {
     final bytes = await response.stream.toBytes();
     _logResponse(response, bytes, latency);
 
-
-
-
-
-
-
-
-
-    
-
     // Rebuild a streamed response so the body can be read by both the logger
     // and the original caller (Supabase).
     return http.StreamedResponse(

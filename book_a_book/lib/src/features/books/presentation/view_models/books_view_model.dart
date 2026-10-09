@@ -64,7 +64,10 @@ final bookSearchProvider = FutureProvider.autoDispose
     });
 
 /// A single book, for the detail screen.
-final bookByIdProvider = FutureProvider.autoDispose.family<Book, int>((ref, id) {
+final bookByIdProvider = FutureProvider.autoDispose.family<Book, int>((
+  ref,
+  id,
+) {
   return ref.watch(booksRepositoryProvider).fetchById(id);
 });
 

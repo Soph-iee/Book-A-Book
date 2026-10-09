@@ -4,20 +4,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'app_text_style.dart';
 import 'color.dart';
 
-/// Spacing scale.
-///
-/// These are getters, not `static const double`, because `.w` reads the
-/// initialised `ScreenUtil` instance at call time. The cost is that
-/// `EdgeInsets.all(Insets.md)` can no longer be `const`, so
-/// `prefer_const_constructors` stops firing on those call sites. That is the
-/// correct trade: an unscaled layout is a real bug, a missing `const` on an
-/// `EdgeInsets` is not.
 abstract final class Insets {
   static double get xs => 4.w;
   static double get sm => 8.w;
 
   /// The page margin.
   static double get md => 16.w;
+  static double get reg => 20.w;
   static double get lg => 24.w;
 
   /// The gap between page sections.
@@ -45,12 +38,6 @@ abstract final class AppRadius {
 }
 
 abstract final class AppTheme {
-  /// The scheme is built explicitly rather than with [ColorScheme.fromSeed].
-  ///
-  /// `fromSeed` runs the Material tonal-palette algorithm, which will *not*
-  /// return `#3A6D44` for a surface you asked to be `#3A6D44` — it produces
-  /// harmonised tones. The design specifies flat literal colours, so the
-  /// algorithm is the wrong tool here.
   static const ColorScheme _scheme = ColorScheme.light(
     primary: AppColors.brandGreen,
     onPrimary: AppColors.onGreen,

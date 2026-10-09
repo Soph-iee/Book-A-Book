@@ -38,40 +38,40 @@ class BookApiModel {
   final BookOwnerApiModel? owner;
 
   factory BookApiModel.fromMap(Map<String, dynamic> map) => BookApiModel(
-        id: map['id'] as int,
-        ownerId: map['owner_id'] as int,
-        title: map['title'] as String? ?? 'Untitled',
-        author: map['author'] as String? ?? 'Unknown author',
-        isbn: map['isbn'] as String?,
-        coverImageUrl: Book.stringList(map['cover_image_url']),
-        condition: map['condition'] as String?,
-        status: map['status'] as String?,
-        aiSummary: map['ai_summary'] as String?,
-        genre: map['genre'] as String?,
-        whyRead: map['why_read'] as String?,
-        tags: Book.stringList(map['tags']),
-        createdAt: Book.dateTime(map['created_at']),
-        owner: map['owner'] is Map<String, dynamic>
-            ? BookOwnerApiModel.fromMap(map['owner'] as Map<String, dynamic>)
-            : null,
-      );
+    id: map['id'] as int,
+    ownerId: map['owner_id'] as int,
+    title: map['title'] as String? ?? 'Untitled',
+    author: map['author'] as String? ?? 'Unknown author',
+    isbn: map['isbn'] as String?,
+    coverImageUrl: Book.stringList(map['cover_image_url']),
+    condition: map['condition'] as String?,
+    status: map['status'] as String?,
+    aiSummary: map['ai_summary'] as String?,
+    genre: map['genre'] as String?,
+    whyRead: map['why_read'] as String?,
+    tags: Book.stringList(map['tags']),
+    createdAt: Book.dateTime(map['created_at']),
+    owner: map['owner'] is Map<String, dynamic>
+        ? BookOwnerApiModel.fromMap(map['owner'] as Map<String, dynamic>)
+        : null,
+  );
 
   Book toDomain() => Book(
-        id: id,
-        ownerId: ownerId,
-        title: title,
-        author: author,
-        isbn: isbn,
-        coverImageUrls: coverImageUrl ?? const [],
-        condition: BookCondition.fromDb(condition),
-        status: BookStatus.fromDb(status),
-        aiSummary: aiSummary,
-        genre: genre,
-        whyRead: whyRead,
-        tags: tags ?? const [],
-        createdAt: createdAt,
-        owner: owner?.toDomain(),
-      );
+    id: id,
+    ownerId: ownerId,
+    title: title,
+    author: author,
+    isbn: isbn,
+    coverImageUrls: coverImageUrl ?? const [],
+    condition: BookCondition.fromDb(condition),
+    status: BookStatus.fromDb(status),
+    aiSummary: aiSummary,
+    genre: genre,
+    whyRead: whyRead,
+    tags: tags ?? const [],
+    createdAt: createdAt,
+    owner: owner?.toDomain(),
+  );
 }
 
 class BookOwnerApiModel {
@@ -96,9 +96,9 @@ class BookOwnerApiModel {
       );
 
   BookOwner toDomain() => BookOwner(
-        id: id,
-        name: name,
-        avatarUrl: avatarUrl,
-        locationText: locationText,
-      );
+    id: id,
+    name: name,
+    avatarUrl: avatarUrl,
+    locationText: locationText,
+  );
 }

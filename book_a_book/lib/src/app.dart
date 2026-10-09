@@ -5,7 +5,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
 
-
 class BookABookApp extends ConsumerWidget {
   const BookABookApp({super.key});
 

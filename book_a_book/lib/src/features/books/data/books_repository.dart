@@ -73,11 +73,7 @@ class BooksRepository {
           .eq('status', BookStatus.available.dbValue)
           .not('genre', 'is', null);
 
-      return rows
-          .map((row) => row['genre'] as String)
-          .toSet()
-          .toList()
-        ..sort();
+      return rows.map((row) => row['genre'] as String).toSet().toList()..sort();
     });
   }
 

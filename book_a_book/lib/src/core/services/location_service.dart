@@ -59,15 +59,13 @@ class LocationService {
     return (
       lat: position.latitude,
       lng: position.longitude,
-      label: 'Lat ${position.latitude.toStringAsFixed(4)}, '
+      label:
+          'Lat ${position.latitude.toStringAsFixed(4)}, '
           'Lng ${position.longitude.toStringAsFixed(4)}',
     );
   }
 
   /// Wraps a manual entry so it flows through the same return type as GPS.
-  LocationResult manual(String label) => (
-    lat: 0.0,
-    lng: 0.0,
-    label: label.trim(),
-  );
+  LocationResult manual(String label) =>
+      (lat: 0.0, lng: 0.0, label: label.trim());
 }
